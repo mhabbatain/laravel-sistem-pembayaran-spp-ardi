@@ -34,11 +34,11 @@ class TagihanSeeder extends Seeder
                     $status = 'lunas';
                     $totalDibayar = $biaya['SPP']->jumlah + $biaya['Katering']->jumlah + $biaya['Laundry']->jumlah;
                 } elseif ($index == 1) {
-                    // November - sebagian cicilan, sebagian lunas
-                    $status = $siswa->id % 2 == 0 ? 'lunas' : 'cicilan';
+                    // November - sebagian lunas, sebagian baru
+                    $status = $siswa->id % 2 == 0 ? 'lunas' : 'baru';
                     $totalDibayar = $status == 'lunas'
                         ? $biaya['SPP']->jumlah + $biaya['Katering']->jumlah + $biaya['Laundry']->jumlah
-                        : $biaya['SPP']->jumlah; // Hanya bayar SPP
+                        : 0;
                 } else {
                     // Desember - baru/belum bayar
                     $status = 'baru';

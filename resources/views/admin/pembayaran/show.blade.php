@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="mb-6 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-800">Detail Pembayaran</h1>
-        <a href="{{ route('admin.pembayaran.index') }}" class="text-blue-600 hover:text-blue-800">
+        <a href="{{ route('admin.pembayaran.index') }}" class="text-green-600 hover:text-green-800">
             ← Kembali
         </a>
     </div>
@@ -106,7 +106,7 @@
             </div>
             <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
                 target="_blank"
-                class="block text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                class="block text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                 Lihat Ukuran Penuh
             </a>
             @else

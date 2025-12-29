@@ -13,7 +13,7 @@
     <div class="bg-white rounded-lg shadow-sm p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-800">Daftar Biaya</h2>
-            <a href="{{ route('admin.biaya.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2">
+            <a href="{{ route('admin.biaya.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg inline-flex items-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
@@ -40,7 +40,7 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->kode }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                            <a href="{{ route('admin.biaya.edit', $item->id) }}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                            <a href="{{ route('admin.biaya.edit', $item->id) }}" class="text-green-600 hover:text-green-900">Edit</a>
                             <form action="{{ route('admin.biaya.destroy', $item->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')

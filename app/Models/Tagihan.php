@@ -59,9 +59,4 @@ class Tagihan extends Model
     {
         return $query->where('status', 'baru');
     }
-
-    public function scopeCicilan($query)
-    {
-        return $query->where('status', 'cicilan');
-    }
 }

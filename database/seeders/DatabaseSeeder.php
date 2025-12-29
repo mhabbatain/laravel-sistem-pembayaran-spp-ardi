@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         // Seed data dalam urutan yang benar
         $this->call([
             InitialDataSeeder::class,      // Admin, Biaya, Pengaturan
-            OperatorSeeder::class,          // User Operator
             RekeningSekolahSeeder::class,   // Rekening Bank
             WaliSeeder::class,         // Wali Murid, User Wali, Siswa
             TagihanSeeder::class,           // Tagihan untuk semua siswa

@@ -13,11 +13,11 @@
 <body class="bg-gray-100" x-data="{ sidebarOpen: false }">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
+        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-green-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
             :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
             <!-- Sidebar Header -->
-            <div class="flex items-center justify-between h-16 px-6 bg-gray-800">
+            <div class="flex items-center justify-between h-16 px-6 bg-green-800">
                 <h1 class="text-white text-lg font-bold">Pondok Darul Jalal</h1>
                 <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
 
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-700 text-sm">{{ Auth::user()->name }}</span>
-                    <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
+                    <div class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
                     <form method="POST" action="{{ route('logout') }}" class="inline">

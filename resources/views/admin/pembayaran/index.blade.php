@@ -45,7 +45,7 @@
                             @if ($item->status_konfirmasi === 'pending')
                             <form action="{{ route('admin.pembayaran.konfirmasi', $item->id) }}" method="POST" class="inline">
                                 @csrf
-                                <button type="submit" class="text-blue-600 hover:text-blue-900">Konfirmasi</button>
+                                <button type="submit" class="text-green-600 hover:text-green-900">Konfirmasi</button>
                             </form>
                             <form action="{{ route('admin.pembayaran.tolak', $item->id) }}" method="POST" class="inline">
                                 @csrf

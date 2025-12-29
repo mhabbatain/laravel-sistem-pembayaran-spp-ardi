@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('bulan');
             $table->string('tahun');
             $table->date('tanggal_tagihan');
-            $table->enum('status', ['baru', 'cicilan', 'lunas'])->default('baru');
+            $table->enum('status', ['baru', 'lunas'])->default('baru');
             $table->decimal('total_tagihan', 10, 2)->default(0);
             $table->decimal('jumlah_bayar', 10, 2)->default(0);
             $table->decimal('sisa_tagihan', 10, 2)->default(0);

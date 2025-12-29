@@ -60,8 +60,6 @@ class PembayaranController extends Controller
 
         if ($tagihan->sisa_tagihan <= 0) {
             $tagihan->status = 'lunas';
-        } elseif ($tagihan->jumlah_bayar > 0) {
-            $tagihan->status = 'cicilan';
         }
 
         $tagihan->save();

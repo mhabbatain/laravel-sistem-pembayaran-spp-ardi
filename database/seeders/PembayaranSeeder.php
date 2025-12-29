@@ -14,9 +14,8 @@ class PembayaranSeeder extends Seeder
     {
         $rekening = RekeningSekolah::where('is_active', true)->first();
 
-        // Ambil semua tagihan yang sudah dibayar (lunas dan cicilan)
+        // Ambil semua tagihan yang sudah dibayar (lunas)
         $tagihanLunas = Tagihan::where('status', 'lunas')->get();
-        $tagihanCicilan = Tagihan::where('status', 'cicilan')->get();
 
         // Pembayaran untuk tagihan lunas
         foreach ($tagihanLunas as $tagihan) {
@@ -34,25 +33,6 @@ class PembayaranSeeder extends Seeder
                 'tanggal_konfirmasi' => Carbon::create($tagihan->tahun, $tagihan->bulan, rand(1, 10)),
                 'dikonfirmasi_oleh' => 1,
                 'catatan' => 'Pembayaran lunas untuk bulan ' . Carbon::create($tagihan->tahun, $tagihan->bulan, 1)->format('F Y'),
-            ]);
-        }
-
-        // Pembayaran untuk tagihan cicilan (hanya bayar sebagian)
-        foreach ($tagihanCicilan as $tagihan) {
-            $siswa = $tagihan->siswa;
-
-            Pembayaran::create([
-                'tagihan_id' => $tagihan->id,
-                'wali_murid_id' => $siswa->wali_murid_id,
-                'metode_pembayaran' => 'transfer',
-                'tanggal_pembayaran' => Carbon::create($tagihan->tahun, $tagihan->bulan, rand(1, 9)),
-                'jumlah_bayar' => $tagihan->jumlah_bayar,
-                'bukti_pembayaran' => 'bukti_transfer_' . $tagihan->id . '.jpg',
-                'rekening_tujuan_id' => $rekening->id,
-                'status_konfirmasi' => 'dikonfirmasi',
-                'tanggal_konfirmasi' => Carbon::create($tagihan->tahun, $tagihan->bulan, rand(1, 10)),
-                'dikonfirmasi_oleh' => 1,
-                'catatan' => 'Pembayaran cicilan (SPP) untuk bulan ' . Carbon::create($tagihan->tahun, $tagihan->bulan, 1)->format('F Y'),
             ]);
         }
 

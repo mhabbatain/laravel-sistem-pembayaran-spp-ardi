@@ -32,7 +32,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 // Admin Routes
-Route::middleware(['auth', 'role:admin,operator'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
     // User Management
@@ -70,8 +70,7 @@ Route::middleware(['auth', 'role:admin,operator'])->prefix('admin')->name('admin
     Route::post('pembayaran/{pembayaran}/tolak', [PembayaranController::class, 'tolak'])->name('pembayaran.tolak');
 
     // Job Tagihan
-    Route::get('job-tagihan', [JobTagihanController::class, 'index'])->name('job-tagihan.index');
-    Route::post('job-tagihan/create', [JobTagihanController::class, 'create'])->name('job-tagihan.create');
+    Route::resource('job-tagihan', JobTagihanController::class)->except(['edit', 'update']);
 
     // Pengaturan
     Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
