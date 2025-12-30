@@ -29,19 +29,22 @@ class PembayaranController extends Controller
         }
 
         $validated = $request->validate([
-            'detail_ids' => 'required|array|min:1',
+            'detail_ids' => 'nullable|array',
             'detail_ids.*' => 'exists:detail_tagihan,id',
             'jumlah_bayar' => 'required|numeric|min:1',
             'rekening_tujuan_id' => 'required|exists:rekening_sekolah,id',
             'tanggal_pembayaran' => 'required|date',
             'bukti_transfer' => 'required|image|max:2048',
-        ], [
-            'detail_ids.required' => 'Pilih minimal satu komponen pembayaran',
-            'detail_ids.min' => 'Pilih minimal satu komponen pembayaran',
         ]);
 
-        // Verify detail_ids belong to this tagihan
-        $detailTagihan = \App\Models\DetailTagihan::whereIn('id', $validated['detail_ids'])
+        // Check if at least one detail is selected
+        if (empty($validated['detail_ids'])) {
+            return back()->withErrors(['detail_ids' => 'Pilih minimal satu komponen pembayaran'])->withInput();
+        }
+
+        // Verify detail_ids belong to this tagihan and load with biaya relation
+        $detailTagihan = \App\Models\DetailTagihan::with('biaya')
+            ->whereIn('id', $validated['detail_ids'])
             ->where('tagihan_id', $tagihan->id)
             ->get();
         
@@ -49,13 +52,14 @@ class PembayaranController extends Controller
             return back()->withErrors(['detail_ids' => 'Detail tagihan tidak valid'])->withInput();
         }
 
-        // Calculate total from selected details
+        // Calculate total from selected details (remaining amount)
         $totalPilihan = $detailTagihan->sum(function($detail) {
             return $detail->jumlah - $detail->jumlah_dibayar;
         });
 
-        if (abs($totalPilihan - $validated['jumlah_bayar']) > 0.01) {
-            return back()->withErrors(['jumlah_bayar' => 'Jumlah pembayaran tidak sesuai'])->withInput();
+        // Allow small floating point difference
+        if (abs($totalPilihan - $validated['jumlah_bayar']) > 1) {
+            return back()->withErrors(['jumlah_bayar' => 'Jumlah pembayaran tidak sesuai dengan komponen yang dipilih. Total: Rp ' . number_format($totalPilihan, 0, ',', '.')])->withInput();
         }
 
         // Upload bukti transfer
@@ -71,10 +75,6 @@ class PembayaranController extends Controller
             'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
             'bukti_transfer' => $buktiPath,
             'status_konfirmasi' => 'pending',
-        ]);
-
-        // Store selected detail_ids in pembayaran note or create detail pembayaran
-        $pembayaran->update([
             'keterangan' => 'Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
         ]);
 

@@ -29,66 +29,13 @@
                     <p class="font-medium text-green-900">{{ $tagihan->bulan }}/{{ $tagihan->tahun }}</p>
                 </div>
                 <div>
-                    <p class="text-green-700">Total Tagihan</p>
-                    <p class="font-medium text-green-900">Rp {{ number_format($tagihan->total_tagihan, 0, ',', '.') }}</p>
+                    <p class="text-green-700">Total Tagihan (Komponen Dipilih)</p>
+                    <p class="font-medium text-green-900">Rp {{ number_format($tagihan->total_tagihan_terpilih, 0, ',', '.') }}</p>
                 </div>
                 <div>
-                    <p class="text-green-700">Sisa Tagihan</p>
-                    <p class="font-medium text-red-600 text-lg">Rp {{ number_format($tagihan->sisa_tagihan, 0, ',', '.') }}</p>
+                    <p class="text-green-700">Sisa Tagihan (Komponen Dipilih)</p>
+                    <p class="font-medium text-red-600 text-lg">Rp {{ number_format($tagihan->sisa_tagihan_terpilih, 0, ',', '.') }}</p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Detail Biaya -->
-        <div class="mb-6">
-            <h3 class="font-semibold text-gray-800 mb-3">Pilih Komponen Pembayaran</h3>
-            <p class="text-sm text-gray-600 mb-3">Centang komponen yang ingin Anda bayar</p>
-            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pilih</th>
-                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jenis Biaya</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Terbayar</th>
-                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Sisa</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($tagihan->detailTagihan as $detail)
-                        @php
-                            $sisa = $detail->jumlah - $detail->jumlah_dibayar;
-                        @endphp
-                        <tr class="komponen-row" data-jumlah="{{ $sisa }}" data-detail-id="{{ $detail->id }}">
-                            <td class="px-4 py-2">
-                                @if($sisa > 0)
-                                <input type="checkbox" name="detail_ids[]" value="{{ $detail->id }}" 
-                                    class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 komponen-checkbox"
-                                    {{ old('detail_ids') && in_array($detail->id, old('detail_ids')) ? 'checked' : 'checked' }}>
-                                @else
-                                <span class="text-green-600 font-semibold">✓ Lunas</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-2 text-sm text-gray-900">{{ $detail->biaya->nama_biaya }}</td>
-                            <td class="px-4 py-2 text-sm text-gray-900 text-right">Rp {{ number_format($detail->jumlah, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 text-sm text-green-600 text-right">Rp {{ number_format($detail->jumlah_dibayar, 0, ',', '.') }}</td>
-                            <td class="px-4 py-2 text-sm text-gray-900 text-right font-semibold">
-                                @if($sisa > 0)
-                                    <span class="text-red-600">Rp {{ number_format($sisa, 0, ',', '.') }}</span>
-                                @else
-                                    <span class="text-green-600">-</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot class="bg-gray-50">
-                        <tr>
-                            <td colspan="4" class="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total yang akan dibayar:</td>
-                            <td class="px-4 py-3 text-right text-base font-bold text-green-600" id="total-terpilih">Rp 0</td>
-                        </tr>
-                    </tfoot>
-                </table>
             </div>
         </div>
 
@@ -97,6 +44,62 @@
 
             <!-- Jumlah Bayar (Hidden, calculated automatically) -->
             <input type="hidden" name="jumlah_bayar" id="jumlah_bayar" value="0">
+
+            <!-- Detail Biaya -->
+            <div class="mb-6">
+                <h3 class="font-semibold text-gray-800 mb-3">Pilih Komponen Pembayaran</h3>
+                <p class="text-sm text-gray-600 mb-3">Centang komponen yang ingin Anda bayar</p>
+                @error('detail_ids')
+                <p class="text-sm text-red-500 mb-2">{{ $message }}</p>
+                @enderror
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pilih</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Jenis Biaya</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Terbayar</th>
+                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Sisa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach($tagihan->detailTagihan as $detail)
+                            @php
+                                $sisa = $detail->jumlah - $detail->jumlah_dibayar;
+                            @endphp
+                            <tr class="komponen-row" data-jumlah="{{ $sisa }}" data-detail-id="{{ $detail->id }}">
+                                <td class="px-4 py-2">
+                                    @if($sisa > 0)
+                                    <input type="checkbox" name="detail_ids[]" value="{{ $detail->id }}" 
+                                        class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 komponen-checkbox"
+                                        {{ old('detail_ids') ? (in_array($detail->id, old('detail_ids')) ? 'checked' : '') : ($detail->biaya->is_default ? 'checked' : '') }}>
+                                    @else
+                                    <span class="text-green-600 font-semibold">✓ Lunas</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2 text-sm text-gray-900">{{ $detail->biaya->nama_biaya }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-900 text-right">Rp {{ number_format($detail->jumlah, 0, ',', '.') }}</td>
+                                <td class="px-4 py-2 text-sm text-green-600 text-right">Rp {{ number_format($detail->jumlah_dibayar, 0, ',', '.') }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-900 text-right font-semibold">
+                                    @if($sisa > 0)
+                                        <span class="text-red-600">Rp {{ number_format($sisa, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-green-600">-</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr>
+                                <td colspan="4" class="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total yang akan dibayar:</td>
+                                <td class="px-4 py-3 text-right text-base font-bold text-green-600" id="total-terpilih">Rp 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
 
             <!-- Rekening Tujuan -->
             <div>
@@ -189,8 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateTotal() {
         let total = 0;
+        let checkedCount = 0;
         checkboxes.forEach(checkbox => {
             if (checkbox.checked) {
+                checkedCount++;
                 const row = checkbox.closest('.komponen-row');
                 const jumlah = parseFloat(row.dataset.jumlah);
                 total += jumlah;
@@ -200,8 +205,10 @@ document.addEventListener('DOMContentLoaded', function() {
         totalElement.textContent = 'Rp ' + total.toLocaleString('id-ID');
         jumlahBayarInput.value = total;
         
-        // Disable submit button if no checkbox is checked
-        submitBtn.disabled = total === 0;
+        // Disable submit button if no checkbox is checked or total is 0
+        submitBtn.disabled = checkedCount === 0 || total === 0;
+        
+        console.log('Checked:', checkedCount, 'Total:', total, 'Disabled:', submitBtn.disabled);
     }
     
     checkboxes.forEach(checkbox => {

@@ -59,4 +59,36 @@ class Tagihan extends Model
     {
         return $query->where('status', 'baru');
     }
+
+    /**
+     * Get total tagihan hanya untuk komponen yang dipilih (is_selected = true)
+     */
+    public function getTotalTagihanTerpilihAttribute()
+    {
+        return $this->detailTagihan->where('is_selected', true)->sum('jumlah');
+    }
+
+    /**
+     * Get jumlah bayar hanya untuk komponen yang dipilih
+     * Dihitung dari pembayaran yang sudah dikonfirmasi
+     */
+    public function getJumlahBayarTerpilihAttribute()
+    {
+        // Sum dari pembayaran yang sudah dikonfirmasi
+        $totalDikonfirmasi = $this->pembayaran()
+            ->where('status_konfirmasi', 'dikonfirmasi')
+            ->sum('jumlah_bayar');
+        
+        return $totalDikonfirmasi;
+    }
+
+    /**
+     * Get sisa tagihan hanya untuk komponen yang dipilih
+     * Sisa tidak boleh negatif (minimum 0)
+     */
+    public function getSisaTagihanTerpilihAttribute()
+    {
+        $sisa = $this->total_tagihan_terpilih - $this->jumlah_bayar_terpilih;
+        return max(0, $sisa);
+    }
 }

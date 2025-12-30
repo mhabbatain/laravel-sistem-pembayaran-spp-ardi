@@ -16,11 +16,13 @@ class Biaya extends Model
         'kode',
         'jumlah',
         'keterangan',
+        'is_default',
         'created_by',
     ];
 
     protected $casts = [
         'jumlah' => 'decimal:2',
+        'is_default' => 'boolean',
     ];
 
     public function createdBy()
