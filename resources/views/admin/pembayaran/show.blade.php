@@ -106,7 +106,7 @@
             </div>
             <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
                 target="_blank"
-                class="block text-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                class="block text-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 transition">
                 Lihat Ukuran Penuh
             </a>
             @else
@@ -118,7 +118,7 @@
                 <form action="{{ route('admin.pembayaran.konfirmasi', $pembayaran->id) }}" method="POST">
                     @csrf
                     <button type="submit"
-                        class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                        class="w-full px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 transition"
                         onclick="return confirm('Yakin ingin mengkonfirmasi pembayaran ini?')">
                         ✓ Konfirmasi Pembayaran
                     </button>

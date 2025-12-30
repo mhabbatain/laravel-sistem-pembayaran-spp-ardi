@@ -121,7 +121,7 @@
                     Batal
                 </a>
                 <button type="submit"
-                    class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    class="px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 transition">
                     Update
                 </button>
             </div>

@@ -105,7 +105,7 @@
                     Batal
                 </a>
                 <button type="submit" 
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    class="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                     Buat dan Proses Job
                 </button>
             </div>

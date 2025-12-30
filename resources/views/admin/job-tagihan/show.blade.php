@@ -62,7 +62,7 @@
             </div>
             
             <div class="w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-green-600 h-4 rounded-full transition-all duration-300" 
+                <div class="bg-green-700 h-4 rounded-full transition-all duration-300" 
                      style="width: {{ $jobTagihan->progress_percentage }}%"></div>
             </div>
 
