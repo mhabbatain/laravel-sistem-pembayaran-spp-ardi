@@ -15,10 +15,14 @@ class DetailTagihan extends Model
         'tagihan_id',
         'biaya_id',
         'jumlah',
+        'jumlah_dibayar',
+        'is_selected',
     ];
 
     protected $casts = [
         'jumlah' => 'decimal:2',
+        'jumlah_dibayar' => 'decimal:2',
+        'is_selected' => 'boolean',
     ];
 
     public function tagihan()
