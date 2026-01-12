@@ -8,6 +8,7 @@ use App\Models\Siswa;
 use App\Models\Biaya;
 use App\Models\Tagihan;
 use App\Models\DetailTagihan;
+use App\Jobs\SendWhatsAppTagihanNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -118,6 +119,9 @@ class JobTagihanController extends Controller
                         'is_selected' => true,
                     ]);
                 }
+
+                // Dispatch WhatsApp notification job (will be processed in background)
+                SendWhatsAppTagihanNotification::dispatch($tagihan)->delay(now()->addSeconds(5 * $processed));
 
                 $processed++;
                 $job->update(['progres' => $processed + $skipped]);

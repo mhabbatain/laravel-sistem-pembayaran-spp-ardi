@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Login - SPP Pondok Darul Jalal</title>
+    <title>Login - SPP Pondok Pesantren Darul Jalal</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .watermark {
@@ -15,7 +15,7 @@
             transform: translate(-50%, -50%);
             width: 500px;
             height: 500px;
-            background-image: url('{{ asset('yayasan-darul-jalal.jpg') }}');
+            background-image: url('{{ asset(' yayasan-darul-jalal.jpg') }}');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -36,7 +36,7 @@
             </div>
             <div>
                 <h2 class="text-center text-3xl font-extrabold text-gray-900">
-                    Pondok Darul Jalal
+                    Pondok Pesantren Darul Jalal
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
                     Sistem Pembayaran SPP

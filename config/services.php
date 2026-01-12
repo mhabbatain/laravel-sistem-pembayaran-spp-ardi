@@ -35,4 +35,19 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | WhatsApp Evolution API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Self-hosted WhatsApp API using Evolution API
+    | Documentation: https://doc.evolution-api.com/
+    |
+    */
+    'whatsapp' => [
+        'api_url' => env('WHATSAPP_API_URL', 'http://localhost:8080'),
+        'api_key' => env('WHATSAPP_API_KEY'),
+        'instance_name' => env('WHATSAPP_INSTANCE_NAME', 'spp-darul-jalal'),
+    ],
+
 ];

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Daftar - SPP Pondok Darul Jalal</title>
+    <title>Daftar - SPP Pondok Pesantren Darul Jalal</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         .watermark {
@@ -39,7 +39,7 @@
                     Daftar Akun Baru
                 </h2>
                 <p class="mt-2 text-center text-sm text-gray-600">
-                    Sistem Pembayaran SPP Pondok Darul Jalal
+                    Sistem Pembayaran SPP Pondok Pesantren Darul Jalal
                 </p>
             </div>
 

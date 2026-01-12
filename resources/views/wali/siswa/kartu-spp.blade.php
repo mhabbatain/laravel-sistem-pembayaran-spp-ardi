@@ -83,12 +83,12 @@
                                 {{ ucfirst($tagihan->status) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                             <a href="{{ route('wali.tagihan.show', $tagihan) }}"
-                                class="text-green-600 hover:text-green-900">Detail</a>
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                             @if($tagihan->status !== 'lunas')
                             <a href="{{ route('wali.pembayaran.konfirmasi', $tagihan) }}"
-                                class="text-green-600 hover:text-green-900">Bayar</a>
+                                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Bayar</a>
                             @endif
                         </td>
                     </tr>

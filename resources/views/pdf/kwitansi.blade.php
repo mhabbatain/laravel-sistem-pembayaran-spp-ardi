@@ -330,23 +330,34 @@
                     <td class="text-right">Rp {{ number_format($detail->jumlah, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
-                <p>Pembayar</p>
-                <div class="signature-line"></div>
-                <p>{{ $pembayaran->tagihan->siswa->waliMurid->user->name ?? '(_________________)' }}</p>
-    </div>
-    <div class="signature-box">
-        <p>{{ now()->format('d F Y') }}</p>
-        <p>Bendahara</p>
-        <div class="signature-line"></div>
-        <p>(_________________)</p>
-    </div>
-    </div>
-    </div>
+                <tr class="total-row">
+                    <td colspan="2" class="text-right"><strong>Total Pembayaran</strong></td>
+                    <td class="text-right"><strong>Rp {{ number_format($pembayaran->jumlah_bayar, 0, ',', '.')
+                            }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
 
-    <div class="footer">
-        <p>Kwitansi ini merupakan bukti pembayaran yang sah.</p>
-        <p>Dicetak pada: {{ now()->format('d F Y H:i:s') }}</p>
-    </div>
+        <div class="signature-section">
+            <div class="signature-row">
+                <div class="signature-box">
+                    <p>Pembayar</p>
+                    <div class="signature-line"></div>
+                    <p>{{ $pembayaran->tagihan->siswa->waliMurid->user->name ?? '(_________________)' }}</p>
+                </div>
+                <div class="signature-box">
+                    <p>{{ now()->format('d F Y') }}</p>
+                    <p>Bendahara</p>
+                    <div class="signature-line"></div>
+                    <p>(_________________)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Kwitansi ini merupakan bukti pembayaran yang sah.</p>
+            <p>Dicetak pada: {{ now()->format('d F Y H:i:s') }}</p>
+        </div>
     </div>
 </body>
 

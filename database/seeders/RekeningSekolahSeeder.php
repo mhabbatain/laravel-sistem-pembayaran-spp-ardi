@@ -14,7 +14,7 @@ class RekeningSekolahSeeder extends Seeder
                 'kode_transfer' => 'MANDIRI001',
                 'nama_bank' => 'Bank Mandiri',
                 'nomor_rekening' => '1370012345678',
-                'pemilik_rekening' => 'Pondok Darul Jalal',
+                'pemilik_rekening' => 'Pondok Pesantren Darul Jalal',
                 'is_active' => true,
             ],
             [
@@ -28,7 +28,7 @@ class RekeningSekolahSeeder extends Seeder
                 'kode_transfer' => 'BCA001',
                 'nama_bank' => 'Bank BCA',
                 'nomor_rekening' => '5431234567',
-                'pemilik_rekening' => 'Pondok Darul Jalal',
+                'pemilik_rekening' => 'Pondok Pesantren Darul Jalal',
                 'is_active' => false,
             ],
         ];

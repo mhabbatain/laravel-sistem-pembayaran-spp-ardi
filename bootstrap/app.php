@@ -14,6 +14,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+        
+        // Redirect authenticated users away from guest routes
+        $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo(function ($request) {
+            $user = $request->user();
+            if ($user && $user->role === 'admin') {
+                return '/admin/dashboard';
+            }
+            return '/wali/dashboard';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

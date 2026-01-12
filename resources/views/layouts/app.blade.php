@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') - {{ config('app.name', 'SPP Pondok Darul Jalal') }}</title>
+    <title>@yield('title') - {{ config('app.name', 'SPP Pondok Pesantren Darul Jalal') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
@@ -16,7 +16,7 @@
             transform: translate(-50%, -50%);
             width: 600px;
             height: 600px;
-            background-image: url('{{ asset('yayasan-darul-jalal.jpg') }}');
+            background-image: url('{{ asset(' yayasan-darul-jalal.jpg') }}');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -37,7 +37,10 @@
 
             <!-- Sidebar Header -->
             <div class="flex items-center justify-between h-16 px-6 bg-green-800">
-                <h1 class="text-white text-lg font-bold">Pondok Darul Jalal</h1>
+                <div class="flex items-center space-x-2">
+                    <img src="{{ asset('yayasan-darul-jalal.jpg') }}" alt="Logo" class="w-10 h-10 object-cover">
+                    <h1 class="text-white text-lg font-bold">Pondok Pesantren Darul Jalal</h1>
+                </div>
                 <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -108,6 +111,8 @@
             </main>
         </div>
     </div>
+
+    @stack('scripts')
 </body>
 
 </html>

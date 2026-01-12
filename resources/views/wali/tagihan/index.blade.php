@@ -60,14 +60,14 @@
                                 {{ ucfirst($item->status) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                             <a href="{{ route('wali.tagihan.show', $item) }}"
-                                class="text-green-600 hover:text-green-900">Detail</a>
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                             <a href="{{ route('wali.pdf.invoice-tagihan', $item) }}"
-                                class="text-blue-600 hover:text-blue-900">Invoice</a>
+                                class="inline-flex items-center px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded hover:bg-gray-700 transition-colors">Invoice</a>
                             @if($item->sisa_tagihan_terpilih > 0)
                             <a href="{{ route('wali.pembayaran.konfirmasi', $item) }}"
-                                class="text-green-600 hover:text-green-900">Bayar</a>
+                                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Bayar</a>
                             @endif
                         </td>
                     </tr>

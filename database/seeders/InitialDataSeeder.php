@@ -54,10 +54,10 @@ class InitialDataSeeder extends Seeder
         ]);
 
         // Create Pengaturan
-        Pengaturan::create(['key' => 'nama_instansi', 'value' => 'Pondok Darul Jalal']);
+        Pengaturan::create(['key' => 'nama_instansi', 'value' => 'Pondok Pesantren Darul Jalal']);
         Pengaturan::create(['key' => 'email_instansi', 'value' => 'info@daruljalal.com']);
-        Pengaturan::create(['key' => 'telepon_instansi', 'value' => '021-1234567']);
-        Pengaturan::create(['key' => 'alamat_instansi', 'value' => 'Jl. Contoh No. 123, Jakarta']);
+        Pengaturan::create(['key' => 'telepon_instansi', 'value' => '0821-7592-01022']);
+        Pengaturan::create(['key' => 'alamat_instansi', 'value' => 'R3QG+6Q6, Tabun, Kec. VII Koto, Kabupaten Tebo, Jambi 37259']);
         Pengaturan::create(['key' => 'data_per_halaman', 'value' => '10']);
     }
 }

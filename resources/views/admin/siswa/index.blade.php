@@ -61,15 +61,16 @@
                                 {{ $item->is_active ? 'Aktif' : 'Non-Aktif' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                             <a href="{{ route('admin.siswa.show', $item->id) }}"
-                                class="text-green-600 hover:text-green-900">Detail</a>
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                             <a href="{{ route('admin.siswa.edit', $item->id) }}"
-                                class="text-green-600 hover:text-green-900">Edit</a>
+                                class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Edit</a>
                             <form action="{{ route('admin.siswa.destroy', $item->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                <button type="submit"
+                                    class="inline-flex items-center px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
                                     onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
                             </form>
                         </td>

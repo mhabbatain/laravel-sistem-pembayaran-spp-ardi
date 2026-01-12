@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TagihanController;
 use App\Http\Controllers\Admin\PembayaranController;
 use App\Http\Controllers\Admin\JobTagihanController;
 use App\Http\Controllers\Admin\PengaturanController;
+use App\Http\Controllers\Admin\WhatsAppController;
 use App\Http\Controllers\Wali\DashboardController as WaliDashboard;
 use App\Http\Controllers\Wali\SiswaController as WaliSiswa;
 use App\Http\Controllers\Wali\TagihanController as WaliTagihan;
@@ -19,7 +20,17 @@ use App\Http\Controllers\Wali\ProfileController;
 use App\Http\Controllers\PdfController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    // Jika sudah login, redirect ke dashboard sesuai role
+    if (auth()->check()) {
+        $user = auth()->user();
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('wali.dashboard');
+    }
+    
+    // Jika belum login, tampilkan halaman welcome
+    return view('welcome');
 });
 
 // Auth Routes
@@ -79,6 +90,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Pengaturan
     Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
+
+    // WhatsApp
+    Route::prefix('whatsapp')->name('whatsapp.')->group(function () {
+        Route::get('/', [WhatsAppController::class, 'index'])->name('index');
+        Route::post('/create-instance', [WhatsAppController::class, 'createInstance'])->name('create-instance');
+        Route::get('/qr-code', [WhatsAppController::class, 'getQrCode'])->name('qr-code');
+        Route::get('/status', [WhatsAppController::class, 'getStatus'])->name('status');
+        Route::post('/disconnect', [WhatsAppController::class, 'disconnect'])->name('disconnect');
+        Route::post('/settings', [WhatsAppController::class, 'updateSettings'])->name('settings');
+        Route::post('/test', [WhatsAppController::class, 'sendTestMessage'])->name('test');
+        Route::post('/restart', [WhatsAppController::class, 'restartInstance'])->name('restart');
+    });
 
     // PDF Routes for Admin
     Route::prefix('pdf')->name('pdf.')->group(function () {

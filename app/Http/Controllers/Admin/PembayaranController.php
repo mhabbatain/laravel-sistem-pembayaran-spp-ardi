@@ -4,10 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
+use App\Models\Pengaturan;
+use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PembayaranController extends Controller
 {
+    protected WhatsAppNotificationService $waNotification;
+
+    public function __construct(WhatsAppNotificationService $waNotification)
+    {
+        $this->waNotification = $waNotification;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -63,6 +73,16 @@ class PembayaranController extends Controller
         }
 
         $tagihan->save();
+
+        // Send WhatsApp notification
+        $notifyPembayaran = Pengaturan::where('key', 'whatsapp_notify_pembayaran')->first()?->value ?? '1';
+        if ($notifyPembayaran === '1') {
+            try {
+                $this->waNotification->sendPembayaranKonfirmasiNotification($pembayaran);
+            } catch (\Exception $e) {
+                Log::error('Failed to send WhatsApp notification', ['error' => $e->getMessage()]);
+            }
+        }
 
         return redirect()->route('admin.pembayaran.show', $pembayaran)->with('success', 'Pembayaran berhasil dikonfirmasi');
     }

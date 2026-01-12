@@ -99,7 +99,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <a href="{{ route('admin.siswa.show', $siswa) }}"
-                                class="text-green-600 hover:text-green-900">Detail</a>
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                         </td>
                     </tr>
                     @endforeach

@@ -51,7 +51,7 @@
     <!-- Welcome Card -->
     <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
         <h2 class="text-2xl font-bold text-gray-800 mb-2">Selamat Datang, {{ Auth::user()->name }}</h2>
-        <p class="text-gray-600">Sistem Pembayaran SPP Pondok Darul Jalal</p>
+        <p class="text-gray-600">Sistem Pembayaran SPP Pondok Pesantren Darul Jalal</p>
     </div>
 
     <!-- Stats Cards -->
@@ -175,12 +175,12 @@
                                 </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                                 <a href="{{ route('wali.tagihan.show', $tagihan->id) }}"
-                                    class="text-green-600 hover:text-green-900 mr-3">Detail</a>
+                                    class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                                 @if($tagihan->status != 'lunas')
                                 <a href="{{ route('wali.pembayaran.konfirmasi', $tagihan->id) }}"
-                                    class="text-green-600 hover:text-green-900">Bayar</a>
+                                    class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Bayar</a>
                                 @endif
                             </td>
                         </tr>
@@ -191,7 +191,7 @@
 
             <div class="mt-4">
                 <a href="{{ route('wali.tagihan.index') }}"
-                    class="text-green-600 hover:text-green-900 text-sm font-medium">
+                    class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition-colors">
                     Lihat Semua Tagihan →
                 </a>
             </div>

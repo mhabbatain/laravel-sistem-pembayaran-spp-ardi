@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             InitialDataSeeder::class,      // Admin, Biaya, Pengaturan
             RekeningSekolahSeeder::class,   // Rekening Bank
+            MetodePembayaranSeeder::class,  // Metode Pembayaran
             WaliSeeder::class,         // Wali Murid, User Wali, Siswa
             TagihanSeeder::class,           // Tagihan untuk semua siswa
             PembayaranSeeder::class,        // Pembayaran (lunas, cicilan, pending)

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Wali;
 use App\Http\Controllers\Controller;
 use App\Models\Tagihan;
 use App\Models\Pembayaran;
+use App\Models\MetodePembayaran;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
@@ -18,7 +19,11 @@ class PembayaranController extends Controller
 
         $tagihan->load(['siswa', 'detailTagihan.biaya']);
         $rekeningSekolah = \App\Models\RekeningSekolah::where('is_active', true)->get();
-        return view('wali.pembayaran.konfirmasi', compact('tagihan', 'rekeningSekolah'));
+        
+        // Get metode pembayaran grouped by kategori
+        $metodePembayaran = MetodePembayaran::active()->ordered()->get()->groupBy('kategori');
+        
+        return view('wali.pembayaran.konfirmasi', compact('tagihan', 'rekeningSekolah', 'metodePembayaran'));
     }
 
     public function storeKonfirmasi(Request $request, Tagihan $tagihan)

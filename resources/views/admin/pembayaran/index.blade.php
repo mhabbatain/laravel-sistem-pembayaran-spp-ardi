@@ -59,19 +59,21 @@
                                 {{ ucfirst($item->status_konfirmasi) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                             <a href="{{ route('admin.pembayaran.show', $item->id) }}"
-                                class="text-green-600 hover:text-green-900">Detail</a>
+                                class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                             @if ($item->status_konfirmasi === 'pending')
                             <form action="{{ route('admin.pembayaran.konfirmasi', $item->id) }}" method="POST"
                                 class="inline">
                                 @csrf
-                                <button type="submit" class="text-green-600 hover:text-green-900">Konfirmasi</button>
+                                <button type="submit"
+                                    class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Konfirmasi</button>
                             </form>
                             <form action="{{ route('admin.pembayaran.tolak', $item->id) }}" method="POST"
                                 class="inline">
                                 @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                <button type="submit"
+                                    class="inline-flex items-center px-3 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 transition-colors"
                                     onclick="return confirm('Yakin ingin menolak?')">Tolak</button>
                             </form>
                             @endif
