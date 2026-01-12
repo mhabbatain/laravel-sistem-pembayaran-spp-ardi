@@ -4,7 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobTagihan;
+use App\Models\Siswa;
+use App\Models\Biaya;
+use App\Models\Tagihan;
+use App\Models\DetailTagihan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JobTagihanController extends Controller
 {
@@ -38,25 +43,114 @@ class JobTagihanController extends Controller
                 ->with('error', 'Job tagihan untuk periode yang sama sudah ada.');
         }
 
-        // Count total siswa that will be processed
-        $totalSiswa = \App\Models\Siswa::count();
+        // Get all active siswa
+        $siswaList = Siswa::where('is_active', true)->get();
+        $totalSiswa = $siswaList->count();
 
+        if ($totalSiswa == 0) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Tidak ada siswa aktif untuk dibuatkan tagihan.');
+        }
+
+        // Get all default biaya
+        $biayaList = Biaya::where('is_default', true)->get();
+
+        if ($biayaList->isEmpty()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Tidak ada biaya default yang dikonfigurasi. Silakan tambahkan biaya terlebih dahulu.');
+        }
+
+        // Create job record
         $job = JobTagihan::create([
             'modul_job' => 'ProcessTagihan',
             'progres' => 0,
             'total' => $totalSiswa,
-            'status' => 'pending',
+            'status' => 'processing',
             'deskripsi' => $request->deskripsi,
             'bulan' => $request->bulan,
             'tahun' => $request->tahun,
             'created_by' => auth()->id(),
         ]);
 
-        // TODO: Dispatch job to process tagihan in background
-        // ProcessTagihanJob::dispatch($job->id);
+        // Process tagihan for each siswa
+        $processed = 0;
+        $skipped = 0;
 
-        return redirect()->route('admin.job-tagihan.index')
-            ->with('success', 'Job tagihan berhasil dibuat dan akan diproses.');
+        DB::beginTransaction();
+        try {
+            foreach ($siswaList as $siswa) {
+                // Check if tagihan already exists for this siswa, bulan, tahun
+                $tagihanExists = Tagihan::where('siswa_id', $siswa->id)
+                    ->where('bulan', $request->bulan)
+                    ->where('tahun', $request->tahun)
+                    ->exists();
+
+                if ($tagihanExists) {
+                    $skipped++;
+                    $job->update(['progres' => $processed + $skipped]);
+                    continue;
+                }
+
+                // Calculate total tagihan from default biaya
+                $totalTagihan = $biayaList->sum('jumlah');
+
+                // Create tagihan
+                $tagihan = Tagihan::create([
+                    'siswa_id' => $siswa->id,
+                    'bulan' => $request->bulan,
+                    'tahun' => $request->tahun,
+                    'tanggal_tagihan' => now(),
+                    'status' => 'baru',
+                    'total_tagihan' => $totalTagihan,
+                    'jumlah_bayar' => 0,
+                    'sisa_tagihan' => $totalTagihan,
+                    'created_by' => auth()->id(),
+                ]);
+
+                // Create detail tagihan for each biaya
+                foreach ($biayaList as $biaya) {
+                    DetailTagihan::create([
+                        'tagihan_id' => $tagihan->id,
+                        'biaya_id' => $biaya->id,
+                        'jumlah' => $biaya->jumlah,
+                        'is_selected' => true,
+                    ]);
+                }
+
+                $processed++;
+                $job->update(['progres' => $processed + $skipped]);
+            }
+
+            // Mark job as completed
+            $job->update([
+                'status' => 'completed',
+                'progres' => $totalSiswa,
+            ]);
+
+            DB::commit();
+
+            $message = "Job tagihan berhasil diproses. {$processed} tagihan dibuat";
+            if ($skipped > 0) {
+                $message .= ", {$skipped} dilewati (sudah ada).";
+            } else {
+                $message .= ".";
+            }
+
+            return redirect()->route('admin.job-tagihan.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            $job->update([
+                'status' => 'failed',
+            ]);
+
+            return redirect()->route('admin.job-tagihan.index')
+                ->with('error', 'Terjadi kesalahan saat memproses job: ' . $e->getMessage());
+        }
     }
 
     public function show(JobTagihan $jobTagihan)

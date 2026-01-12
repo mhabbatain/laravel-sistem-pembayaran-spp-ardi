@@ -27,8 +27,26 @@ class TagihanController extends Controller
             });
         }
 
+        // Filter by bulan
+        if ($request->has('bulan') && $request->bulan != '') {
+            $query->where('bulan', $request->bulan);
+        }
+
+        // Filter by tahun
+        if ($request->has('tahun') && $request->tahun != '') {
+            $query->where('tahun', $request->tahun);
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Get unique years for filter dropdown
+        $tahunList = Tagihan::select('tahun')->distinct()->orderBy('tahun', 'desc')->pluck('tahun');
+
         $tagihan = $query->latest()->paginate(10)->withQueryString();
-        return view('admin.tagihan.index', compact('tagihan'));
+        return view('admin.tagihan.index', compact('tagihan', 'tahunList'));
     }
 
     /**
@@ -90,6 +108,7 @@ class TagihanController extends Controller
                 'tagihan_id' => $tagihan->id,
                 'biaya_id' => $biayaId,
                 'jumlah' => $biaya->jumlah,
+                'is_selected' => true,
             ]);
         }
 
@@ -171,6 +190,7 @@ class TagihanController extends Controller
                 'tagihan_id' => $tagihan->id,
                 'biaya_id' => $biayaId,
                 'jumlah' => $biaya->jumlah,
+                'is_selected' => true,
             ]);
         }
 

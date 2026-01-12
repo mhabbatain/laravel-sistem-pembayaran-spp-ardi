@@ -15,7 +15,8 @@
         <div class="flex items-center space-x-4 mb-6">
             <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
                 <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
             </div>
             <div>
@@ -27,15 +28,18 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-gray-50 rounded-lg p-4">
                 <p class="text-sm text-gray-500">Total Tagihan</p>
-                <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($siswa->tagihan->sum('total_tagihan'), 0, ',', '.') }}</p>
+                <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($siswa->tagihan->sum('total_tagihan'),
+                    0, ',', '.') }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
                 <p class="text-sm text-gray-500">Sudah Dibayar</p>
-                <p class="text-2xl font-bold text-green-600">Rp {{ number_format($siswa->tagihan->sum('jumlah_bayar'), 0, ',', '.') }}</p>
+                <p class="text-2xl font-bold text-green-600">Rp {{ number_format($siswa->tagihan->sum('jumlah_bayar'),
+                    0, ',', '.') }}</p>
             </div>
             <div class="bg-gray-50 rounded-lg p-4">
                 <p class="text-sm text-gray-500">Sisa Tagihan</p>
-                <p class="text-2xl font-bold text-red-600">Rp {{ number_format($siswa->tagihan->sum('sisa_tagihan'), 0, ',', '.') }}</p>
+                <p class="text-2xl font-bold text-red-600">Rp {{ number_format($siswa->tagihan->sum('sisa_tagihan'), 0,
+                    ',', '.') }}</p>
             </div>
         </div>
     </div>
@@ -47,31 +51,44 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Periode</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Tagihan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dibayar</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Periode</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total
+                            Tagihan</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Dibayar</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($siswa->tagihan as $tagihan)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $tagihan->bulan }}/{{ $tagihan->tahun }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {{ number_format($tagihan->total_tagihan, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">Rp {{ number_format($tagihan->jumlah_bayar, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">Rp {{ number_format($tagihan->sisa_tagihan, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $tagihan->bulan
+                            }}/{{ $tagihan->tahun }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {{
+                            number_format($tagihan->total_tagihan, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">Rp {{
+                            number_format($tagihan->jumlah_bayar, 0, ',', '.') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600">Rp {{
+                            number_format($tagihan->sisa_tagihan, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            <span
+                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                 {{ $tagihan->status === 'lunas' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ ucfirst($tagihan->status) }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                            <a href="{{ route('wali.tagihan.show', $tagihan) }}" class="text-green-600 hover:text-green-900">Detail</a>
+                            <a href="{{ route('wali.tagihan.show', $tagihan) }}"
+                                class="text-green-600 hover:text-green-900">Detail</a>
                             @if($tagihan->status !== 'lunas')
-                            <a href="{{ route('wali.pembayaran.konfirmasi', $tagihan) }}" class="text-green-600 hover:text-green-900">Bayar</a>
+                            <a href="{{ route('wali.pembayaran.konfirmasi', $tagihan) }}"
+                                class="text-green-600 hover:text-green-900">Bayar</a>
                             @endif
                         </td>
                     </tr>
@@ -86,13 +103,22 @@
     </div>
 
     <!-- Back Button -->
-    <div class="flex justify-start">
-        <a href="{{ route('wali.siswa.index') }}" 
-           class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 inline-flex items-center space-x-2">
+    <div class="flex justify-between">
+        <a href="{{ route('wali.siswa.index') }}"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 inline-flex items-center space-x-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             <span>Kembali</span>
+        </a>
+
+        <a href="{{ route('wali.pdf.kartu-spp', $siswa) }}"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-flex items-center space-x-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Download Kartu SPP</span>
         </a>
     </div>
 </div>

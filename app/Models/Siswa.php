@@ -17,7 +17,7 @@ class Siswa extends Model
         'nama',
         'jenis_kelamin',
         'jurusan',
-        'angkatan',
+        'alamat',
         'kelas',
         'biaya_spp',
         'is_active',

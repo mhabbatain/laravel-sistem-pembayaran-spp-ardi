@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nama');
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('jurusan');
-            $table->string('angkatan');
+            $table->text('alamat');
             $table->string('kelas');
             $table->decimal('biaya_spp', 10, 2)->default(0);
             $table->boolean('is_active')->default(true);

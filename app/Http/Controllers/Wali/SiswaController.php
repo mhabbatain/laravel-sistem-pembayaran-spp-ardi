@@ -11,7 +11,10 @@ class SiswaController extends Controller
     public function index()
     {
         $waliMurid = auth()->user()->waliMurid;
-        $siswa = $waliMurid->siswa()->where('is_active', true)->get();
+        $siswa = $waliMurid->siswa()
+            ->where('is_active', true)
+            ->with(['createdBy', 'tagihan.detailTagihan.biaya'])
+            ->get();
         return view('wali.siswa.index', compact('siswa'));
     }
 

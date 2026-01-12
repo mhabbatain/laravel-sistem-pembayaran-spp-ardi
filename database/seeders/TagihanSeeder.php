@@ -18,15 +18,16 @@ class TagihanSeeder extends Seeder
 
         // Buat tagihan untuk 3 bulan terakhir
         $bulanList = [
-            ['bulan' => 10, 'tahun' => 2024], // Oktober
-            ['bulan' => 11, 'tahun' => 2024], // November
-            ['bulan' => 12, 'tahun' => 2024], // Desember
+            ['bulan' => 'Oktober', 'tahun' => 2024, 'num' => 10],
+            ['bulan' => 'November', 'tahun' => 2024, 'num' => 11],
+            ['bulan' => 'Desember', 'tahun' => 2024, 'num' => 12],
         ];
 
         foreach ($siswaAktif as $siswa) {
             foreach ($bulanList as $index => $periode) {
                 $bulan = $periode['bulan'];
                 $tahun = $periode['tahun'];
+                $bulanNum = $periode['num'];
 
                 // Status tagihan berbeda-beda
                 if ($index == 0) {
@@ -53,7 +54,7 @@ class TagihanSeeder extends Seeder
                     'siswa_id' => $siswa->id,
                     'bulan' => $bulan,
                     'tahun' => $tahun,
-                    'tanggal_tagihan' => Carbon::create($tahun, $bulan, 1),
+                    'tanggal_tagihan' => Carbon::create($tahun, $bulanNum, 1),
                     'status' => $status,
                     'total_tagihan' => $totalTagihan,
                     'jumlah_bayar' => $jumlahBayar,
@@ -69,6 +70,7 @@ class TagihanSeeder extends Seeder
                         'tagihan_id' => $tagihan->id,
                         'biaya_id' => $biayaItem->id,
                         'jumlah' => $biayaItem->jumlah,
+                        'is_selected' => true,
                     ]);
                 }
             }

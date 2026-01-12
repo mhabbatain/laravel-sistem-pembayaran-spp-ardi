@@ -37,17 +37,20 @@
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="text-gray-600">Periode Tagihan</span>
-                    <span class="font-medium">{{ $pembayaran->tagihan->bulan ?? '-' }} / {{ $pembayaran->tagihan->tahun ?? '-' }}</span>
+                    <span class="font-medium">{{ $pembayaran->tagihan->bulan ?? '-' }} / {{ $pembayaran->tagihan->tahun
+                        ?? '-' }}</span>
                 </div>
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="text-gray-600">Total Tagihan</span>
-                    <span class="font-medium text-red-600">Rp {{ number_format($pembayaran->tagihan->total_tagihan ?? 0, 0, ',', '.') }}</span>
+                    <span class="font-medium text-red-600">Rp {{ number_format($pembayaran->tagihan->total_tagihan ?? 0,
+                        0, ',', '.') }}</span>
                 </div>
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="text-gray-600">Jumlah Dibayar</span>
-                    <span class="font-medium text-green-600">Rp {{ number_format($pembayaran->jumlah_bayar ?? 0, 0, ',', '.') }}</span>
+                    <span class="font-medium text-green-600">Rp {{ number_format($pembayaran->jumlah_bayar ?? 0, 0, ',',
+                        '.') }}</span>
                 </div>
 
                 <div class="flex justify-between border-b pb-2">
@@ -65,7 +68,8 @@
 
                 <div class="flex justify-between border-b pb-2">
                     <span class="text-gray-600">Status</span>
-                    <span class="px-3 py-1 rounded-full text-sm font-semibold
+                    <span
+                        class="px-3 py-1 rounded-full text-sm font-semibold
                         {{ $pembayaran->status_konfirmasi === 'dikonfirmasi' ? 'bg-green-100 text-green-800' : 
                            ($pembayaran->status_konfirmasi === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
                         {{ ucfirst($pembayaran->status_konfirmasi ?? '-') }}
@@ -99,18 +103,29 @@
 
             @if($pembayaran->bukti_pembayaran)
             <div class="mb-4">
-                <img src="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
-                    alt="Bukti Pembayaran"
+                <img src="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" alt="Bukti Pembayaran"
                     class="w-full rounded-lg border"
                     onerror="this.src='https://via.placeholder.com/400x300?text=Bukti+Pembayaran'">
             </div>
-            <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}"
-                target="_blank"
-                class="block text-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 transition">
+            <a href="{{ asset('storage/' . $pembayaran->bukti_pembayaran) }}" target="_blank"
+                class="block text-center px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition">
                 Lihat Ukuran Penuh
             </a>
             @else
             <p class="text-gray-500 text-center py-8">Tidak ada bukti pembayaran</p>
+            @endif
+
+            @if($pembayaran->status_konfirmasi === 'dikonfirmasi')
+            <div class="mt-4">
+                <a href="{{ route('admin.pdf.kwitansi', $pembayaran) }}"
+                    class="block text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download Kwitansi
+                </a>
+            </div>
             @endif
 
             @if($pembayaran->status_konfirmasi === 'pending')
@@ -118,7 +133,7 @@
                 <form action="{{ route('admin.pembayaran.konfirmasi', $pembayaran->id) }}" method="POST">
                     @csrf
                     <button type="submit"
-                        class="w-full px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-700 transition"
+                        class="w-full px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 transition"
                         onclick="return confirm('Yakin ingin mengkonfirmasi pembayaran ini?')">
                         ✓ Konfirmasi Pembayaran
                     </button>

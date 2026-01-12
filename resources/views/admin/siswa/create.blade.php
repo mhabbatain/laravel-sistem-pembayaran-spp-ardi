@@ -25,7 +25,7 @@
                         class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('wali_murid_id') ? 'border-red-500' : 'border-gray-300' }}">
                         <option value="">Pilih Wali Murid</option>
                         @foreach($waliMurid as $wali)
-                        <option value="{{ $wali->id }}" {{ old('wali_murid_id') == $wali->id ? 'selected' : '' }}>
+                        <option value="{{ $wali->id }}" {{ old('wali_murid_id')==$wali->id ? 'selected' : '' }}>
                             {{ $wali->user->name }}
                         </option>
                         @endforeach
@@ -54,12 +54,13 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+                    <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">Jenis
+                        Kelamin</label>
                     <select name="jenis_kelamin" id="jenis_kelamin" required
                         class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('jenis_kelamin') ? 'border-red-500' : 'border-gray-300' }}">
                         <option value="">Pilih Jenis Kelamin</option>
-                        <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+                        <option value="L" {{ old('jenis_kelamin')=='L' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ old('jenis_kelamin')=='P' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                     @error('jenis_kelamin')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -71,8 +72,8 @@
                     <select name="jurusan" id="jurusan" required
                         class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('jurusan') ? 'border-red-500' : 'border-gray-300' }}">
                         <option value="">Pilih Jurusan</option>
-                        <option value="IPA" {{ old('jurusan') == 'IPA' ? 'selected' : '' }}>IPA</option>
-                        <option value="IPS" {{ old('jurusan') == 'IPS' ? 'selected' : '' }}>IPS</option>
+                        <option value="IPA" {{ old('jurusan')=='IPA' ? 'selected' : '' }}>IPA</option>
+                        <option value="IPS" {{ old('jurusan')=='IPS' ? 'selected' : '' }}>IPS</option>
                     </select>
                     @error('jurusan')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -80,10 +81,11 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="angkatan" class="block text-sm font-medium text-gray-700 mb-2">Angkatan</label>
-                    <input type="text" name="angkatan" id="angkatan" value="{{ old('angkatan', date('Y')) }}" required
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('angkatan') ? 'border-red-500' : 'border-gray-300' }}">
-                    @error('angkatan')
+                    <label for="alamat" class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+                    <textarea name="alamat" id="alamat" rows="3" required
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('alamat') ? 'border-red-500' : 'border-gray-300' }}"
+                        placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
+                    @error('alamat')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -93,12 +95,12 @@
                     <select name="kelas" id="kelas" required
                         class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 {{ $errors->has('kelas') ? 'border-red-500' : 'border-gray-300' }}">
                         <option value="">Pilih Kelas</option>
-                        <option value="VII" {{ old('kelas') == 'VII' ? 'selected' : '' }}>VII</option>
-                        <option value="VIII" {{ old('kelas') == 'VIII' ? 'selected' : '' }}>VIII</option>
-                        <option value="IX" {{ old('kelas') == 'IX' ? 'selected' : '' }}>IX</option>
-                        <option value="X" {{ old('kelas') == 'X' ? 'selected' : '' }}>X</option>
-                        <option value="XI" {{ old('kelas') == 'XI' ? 'selected' : '' }}>XI</option>
-                        <option value="XII" {{ old('kelas') == 'XII' ? 'selected' : '' }}>XII</option>
+                        <option value="VII" {{ old('kelas')=='VII' ? 'selected' : '' }}>VII</option>
+                        <option value="VIII" {{ old('kelas')=='VIII' ? 'selected' : '' }}>VIII</option>
+                        <option value="IX" {{ old('kelas')=='IX' ? 'selected' : '' }}>IX</option>
+                        <option value="X" {{ old('kelas')=='X' ? 'selected' : '' }}>X</option>
+                        <option value="XI" {{ old('kelas')=='XI' ? 'selected' : '' }}>XI</option>
+                        <option value="XII" {{ old('kelas')=='XII' ? 'selected' : '' }}>XII</option>
                     </select>
                     @error('kelas')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>

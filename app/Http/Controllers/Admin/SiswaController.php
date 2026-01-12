@@ -80,7 +80,7 @@ class SiswaController extends Controller
             'nama' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:L,P',
             'jurusan' => 'required|string|max:100',
-            'angkatan' => 'required|string|max:10',
+            'alamat' => 'required|string|max:255',
             'kelas' => 'required|string|max:10',
             'is_active' => 'boolean',
         ]);

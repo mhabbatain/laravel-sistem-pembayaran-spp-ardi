@@ -31,6 +31,7 @@ class InitialDataSeeder extends Seeder
             'kode' => 'SPP',
             'jumlah' => 500000,
             'keterangan' => 'Sumbangan Pembinaan Pendidikan',
+            'is_default' => true,
             'created_by' => 1,
         ]);
 
@@ -39,6 +40,7 @@ class InitialDataSeeder extends Seeder
             'kode' => 'KATERING',
             'jumlah' => 300000,
             'keterangan' => 'Biaya Katering Bulanan',
+            'is_default' => true,
             'created_by' => 1,
         ]);
 
@@ -47,6 +49,7 @@ class InitialDataSeeder extends Seeder
             'kode' => 'LAUNDRY',
             'jumlah' => 150000,
             'keterangan' => 'Biaya Laundry Bulanan',
+            'is_default' => true,
             'created_by' => 1,
         ]);
 

@@ -8,10 +8,29 @@
     <title>@yield('title') - {{ config('app.name', 'SPP Pondok Darul Jalal') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background-image: url('{{ asset('yayasan-darul-jalal.jpg') }}');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100" x-data="{ sidebarOpen: false }">
-    <div class="min-h-screen flex">
+    <!-- Watermark -->
+    <div class="watermark"></div>
+    <div class="min-h-screen flex relative z-10">
         <!-- Sidebar -->
         <div class="fixed inset-y-0 left-0 z-50 w-64 bg-green-900 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0"
             :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
@@ -21,7 +40,8 @@
                 <h1 class="text-white text-lg font-bold">Pondok Darul Jalal</h1>
                 <button @click="sidebarOpen = false" class="lg:hidden text-gray-400 hover:text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -33,16 +53,11 @@
         </div>
 
         <!-- Overlay for mobile -->
-        <div x-show="sidebarOpen"
-            @click="sidebarOpen = false"
-            x-transition:enter="transition-opacity ease-linear duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition-opacity ease-linear duration-300"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 bg-gray-900 bg-opacity-50 lg:hidden z-40"
-            style="display: none;">
+        <div x-show="sidebarOpen" @click="sidebarOpen = false"
+            x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-900 bg-opacity-50 lg:hidden z-40" style="display: none;">
         </div>
 
         <!-- Main Content -->
@@ -51,7 +66,8 @@
             <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6">
                 <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-gray-600 hover:text-gray-900">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
 
@@ -61,7 +77,8 @@
 
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-700 text-sm">{{ Auth::user()->name }}</span>
-                    <div class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
+                    <div
+                        class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-semibold">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </div>
                     <form method="POST" action="{{ route('logout') }}" class="inline">

@@ -16,6 +16,7 @@ use App\Http\Controllers\Wali\SiswaController as WaliSiswa;
 use App\Http\Controllers\Wali\TagihanController as WaliTagihan;
 use App\Http\Controllers\Wali\PembayaranController as WaliPembayaran;
 use App\Http\Controllers\Wali\ProfileController;
+use App\Http\Controllers\PdfController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -27,6 +28,9 @@ Route::middleware('guest')->group(function () {
         return view('auth.login');
     })->name('login');
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+    
+    Route::get('/register', [\App\Http\Controllers\AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register'])->name('register.post');
 });
 
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
@@ -75,6 +79,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Pengaturan
     Route::get('pengaturan', [PengaturanController::class, 'index'])->name('pengaturan.index');
     Route::post('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
+
+    // PDF Routes for Admin
+    Route::prefix('pdf')->name('pdf.')->group(function () {
+        Route::get('invoice-tagihan/{tagihan}', [PdfController::class, 'invoiceTagihan'])->name('invoice-tagihan');
+        Route::get('invoice-tagihan/{tagihan}/view', [PdfController::class, 'invoiceTagihanStream'])->name('invoice-tagihan.view');
+        Route::get('kwitansi/{pembayaran}', [PdfController::class, 'kwitansi'])->name('kwitansi');
+        Route::get('kwitansi/{pembayaran}/view', [PdfController::class, 'kwitansiStream'])->name('kwitansi.view');
+        Route::get('kartu-spp/{siswa}', [PdfController::class, 'kartuSpp'])->name('kartu-spp');
+        Route::get('kartu-spp/{siswa}/view', [PdfController::class, 'kartuSppStream'])->name('kartu-spp.view');
+        Route::get('laporan-pembayaran', [PdfController::class, 'laporanPembayaran'])->name('laporan-pembayaran');
+        Route::get('laporan-tagihan', [PdfController::class, 'laporanTagihan'])->name('laporan-tagihan');
+    });
 });
 
 // Wali Santri Routes
@@ -96,4 +112,14 @@ Route::middleware(['auth', 'role:wali'])->prefix('wali')->name('wali.')->group(f
     // Profile
     Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // PDF Routes for Wali
+    Route::prefix('pdf')->name('pdf.')->group(function () {
+        Route::get('invoice-tagihan/{tagihan}', [PdfController::class, 'invoiceTagihan'])->name('invoice-tagihan');
+        Route::get('invoice-tagihan/{tagihan}/view', [PdfController::class, 'invoiceTagihanStream'])->name('invoice-tagihan.view');
+        Route::get('kwitansi/{pembayaran}', [PdfController::class, 'kwitansi'])->name('kwitansi');
+        Route::get('kwitansi/{pembayaran}/view', [PdfController::class, 'kwitansiStream'])->name('kwitansi.view');
+        Route::get('kartu-spp/{siswa}', [PdfController::class, 'kartuSpp'])->name('kartu-spp');
+        Route::get('kartu-spp/{siswa}/view', [PdfController::class, 'kartuSppStream'])->name('kartu-spp.view');
+    });
 });
