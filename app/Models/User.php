@@ -10,6 +10,8 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @method bool isAdmin()
  * @method bool isWali()
+ * @method bool isSuperadmin()
+ * @method bool isOperator()
  */
 class User extends Authenticatable
 {
@@ -83,5 +85,25 @@ class User extends Authenticatable
     public function isWali(): bool
     {
         return $this->role === 'wali';
+    }
+
+    /**
+     * Check if user is superadmin
+     *
+     * @return bool
+     */
+    public function isSuperadmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    /**
+     * Check if user is operator (admin)
+     *
+     * @return bool
+     */
+    public function isOperator(): bool
+    {
+        return $this->role === 'admin';
     }
 }

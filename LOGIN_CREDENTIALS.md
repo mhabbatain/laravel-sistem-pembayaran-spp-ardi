@@ -1,5 +1,16 @@
 # Login Credentials
 
+## Role Superadmin (Ketua Yayasan)
+
+-   **Email**: ketuayayasan@daruljalal.com
+-   **Password**: password
+-   **Akses**:
+    -   Melihat data santri
+    -   Melihat data wali santri
+    -   Melihat rekap pembayaran SPP
+    -   Melihat laporan pembayaran dan tagihan
+    -   Mengelola data operator
+
 ## Role Admin
 
 -   **Email**: admin@daruljalal.com

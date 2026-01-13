@@ -23,6 +23,9 @@ Route::get('/', function () {
     // Jika sudah login, redirect ke dashboard sesuai role
     if (auth()->check()) {
         $user = auth()->user();
+        if ($user->role === 'superadmin') {
+            return redirect()->route('superadmin.dashboard');
+        }
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
@@ -145,4 +148,27 @@ Route::middleware(['auth', 'role:wali'])->prefix('wali')->name('wali.')->group(f
         Route::get('kartu-spp/{siswa}', [PdfController::class, 'kartuSpp'])->name('kartu-spp');
         Route::get('kartu-spp/{siswa}/view', [PdfController::class, 'kartuSppStream'])->name('kartu-spp.view');
     });
+});
+
+// Superadmin (Ketua Yayasan) Routes
+Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Superadmin\DashboardController::class, 'index'])->name('dashboard');
+
+    // Data Santri (View Only)
+    Route::get('siswa', [\App\Http\Controllers\Superadmin\SiswaController::class, 'index'])->name('siswa.index');
+    Route::get('siswa/{siswa}', [\App\Http\Controllers\Superadmin\SiswaController::class, 'show'])->name('siswa.show');
+
+    // Data Wali Santri (View Only)
+    Route::get('wali-murid', [\App\Http\Controllers\Superadmin\WaliMuridController::class, 'index'])->name('wali-murid.index');
+    Route::get('wali-murid/{waliMurid}', [\App\Http\Controllers\Superadmin\WaliMuridController::class, 'show'])->name('wali-murid.show');
+
+    // Laporan
+    Route::prefix('laporan')->name('laporan.')->group(function () {
+        Route::get('rekap-pembayaran', [\App\Http\Controllers\Superadmin\LaporanController::class, 'rekapPembayaran'])->name('rekap-pembayaran');
+        Route::get('pembayaran', [\App\Http\Controllers\Superadmin\LaporanController::class, 'pembayaran'])->name('pembayaran');
+        Route::get('tagihan', [\App\Http\Controllers\Superadmin\LaporanController::class, 'tagihan'])->name('tagihan');
+    });
+
+    // Kelola Operator
+    Route::resource('operator', \App\Http\Controllers\Superadmin\OperatorController::class);
 });
