@@ -9,7 +9,8 @@
 @endsection
 
 @php
-$namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+$namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober',
+'November', 'Desember'];
 @endphp
 
 @section('content')
@@ -26,9 +27,9 @@ $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'A
                     <div>
                         <select name="bulan"
                             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $bulan==$i ? 'selected' : '' }}>{{ $namaBulan[$i-1] }}</option>
-                            @endfor
+                            @for ($i = 1; $i <= 12; $i++) <option value="{{ $i }}" {{ $bulan==$i ? 'selected' : '' }}>{{
+                                $namaBulan[$i-1] }}</option>
+                                @endfor
                         </select>
                     </div>
                     <div>
@@ -63,7 +64,8 @@ $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'A
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-green-600">Total Pembayaran (All Time)</p>
-                        <p class="text-2xl font-bold text-green-800">Rp {{ number_format($totalPembayaran, 0, ',', '.') }}</p>
+                        <p class="text-2xl font-bold text-green-800">Rp {{ number_format($totalPembayaran, 0, ',', '.')
+                            }}</p>
                     </div>
                 </div>
             </div>
@@ -76,8 +78,10 @@ $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'A
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-blue-600">Pembayaran {{ $namaBulan[$bulan-1] }} {{ $tahun }}</p>
-                        <p class="text-2xl font-bold text-blue-800">Rp {{ number_format($totalBulanIni, 0, ',', '.') }}</p>
+                        <p class="text-sm font-medium text-blue-600">Pembayaran {{ $namaBulan[$bulan-1] }} {{ $tahun }}
+                        </p>
+                        <p class="text-2xl font-bold text-blue-800">Rp {{ number_format($totalBulanIni, 0, ',', '.') }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -90,30 +94,38 @@ $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'A
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bulan</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pembayaran</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grafik</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Bulan</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Total Pembayaran</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Grafik</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @php
                         $maxPembayaran = $pembayaranBulanan->max('total') ?: 1;
                         @endphp
-                        @for ($i = 1; $i <= 12; $i++)
-                        @php
-                        $total = $pembayaranBulanan->get($i)?->total ?? 0;
-                        $percentage = ($total / $maxPembayaran) * 100;
-                        @endphp
-                        <tr class="{{ $bulan == $i ? 'bg-green-50' : '' }}">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $namaBulan[$i-1] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{ number_format($total, 0, ',', '.') }}</td>
-                            <td class="px-6 py-4 w-1/2">
-                                <div class="w-full bg-gray-200 rounded-full h-4">
-                                    <div class="bg-green-600 h-4 rounded-full" style="width: {{ $percentage }}%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        @endfor
+                        @for ($i = 1; $i <= 12; $i++) @php $total=$pembayaranBulanan->get($i)?->total ?? 0;
+                            $percentage = ($total / $maxPembayaran) * 100;
+                            @endphp
+                            <tr class="{{ $bulan == $i ? 'bg-green-50' : '' }}">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                                    $namaBulan[$i-1] }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{
+                                    number_format($total, 0, ',', '.') }}</td>
+                                <td class="px-6 py-4 w-1/2">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex-1 bg-gray-200 rounded-full h-4">
+                                            <div class="bg-green-600 h-4 rounded-full"
+                                                style="width: {{ $percentage }}%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-600 w-14 text-right">{{
+                                            number_format($percentage, 1) }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endfor
                     </tbody>
                 </table>
             </div>
@@ -121,7 +133,8 @@ $namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'A
 
         <!-- Pembayaran Per Kelas -->
         <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pembayaran Per Kelas ({{ $namaBulan[$bulan-1] }} {{ $tahun }})</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Pembayaran Per Kelas ({{ $namaBulan[$bulan-1] }} {{
+                $tahun }})</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">

@@ -22,7 +22,7 @@
     </div>
 
     <!-- Form -->
-    <div class="bg-white overflow-hidden shadow-sm rounded-lg p-6">
+    <div class="bg-white rounded-lg shadow-sm p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-6">Form Edit Operator</h3>
 
         <form method="POST" action="{{ route('superadmin.operator.update', $operator) }}">
@@ -30,64 +30,62 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama <span
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nama <span
                             class="text-red-500">*</span></label>
                     <input type="text" name="name" id="name" value="{{ old('name', $operator->name) }}"
-                        class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500 @error('name') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 @error('name') border-red-500 @else border-gray-300 @enderror"
                         required>
                     @error('name')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email <span
                             class="text-red-500">*</span></label>
                     <input type="email" name="email" id="email" value="{{ old('email', $operator->email) }}"
-                        class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500 @error('email') border-red-500 @enderror"
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 @error('email') border-red-500 @else border-gray-300 @enderror"
                         required>
                     @error('email')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <label for="no_hp" class="block text-sm font-medium text-gray-700 mb-1">No. HP</label>
+                <div class="mb-4">
+                    <label for="no_hp" class="block text-sm font-medium text-gray-700 mb-2">No. HP</label>
                     <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp', $operator->no_hp) }}"
-                        class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500 @error('no_hp') border-red-500 @enderror">
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 @error('no_hp') border-red-500 @else border-gray-300 @enderror">
                     @error('no_hp')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div></div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
                     <input type="password" name="password" id="password"
-                        class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500 @error('password') border-red-500 @enderror">
-                    <p class="mt-1 text-xs text-gray-500">Kosongkan jika tidak ingin mengubah password</p>
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-green-500 focus:border-green-500 @error('password') border-red-500 @else border-gray-300 @enderror">
+                    <p class="text-gray-500 text-xs mt-1">Kosongkan jika tidak ingin mengubah password</p>
                     @error('password')
-                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi
+                <div class="mb-4">
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi
                         Password Baru</label>
                     <input type="password" name="password_confirmation" id="password_confirmation"
-                        class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
                 </div>
             </div>
 
-            <div class="mt-6 flex justify-end space-x-3">
+            <div class="flex justify-end space-x-3 mt-6">
                 <a href="{{ route('superadmin.operator.index') }}"
-                    class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                    class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
                     Batal
                 </a>
                 <button type="submit"
-                    class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                     Update
                 </button>
             </div>

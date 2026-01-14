@@ -104,7 +104,7 @@
                     @forelse($siswa->tagihan as $tagihan)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ \Carbon\Carbon::create()->month($tagihan->bulan)->translatedFormat('F') }} {{
+                            {{ \Carbon\Carbon::create()->month((int) $tagihan->bulan)->translatedFormat('F') }} {{
                             $tagihan->tahun }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
