@@ -26,11 +26,11 @@
     </style>
 </head>
 
-<body class="bg-gradient-to-r from-green-500 to-teal-600">
+<body style="background-image: url('{{ asset('bg_pondok.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
     <!-- Watermark -->
     <div class="watermark"></div>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="max-w-md w-full space-y-2 bg-white p-10 rounded-xl shadow-2xl">
+        <div class="max-w-md w-full space-y-2 bg-white/80 backdrop-blur-sm p-10 rounded-xl shadow-2xl">
             <div class="flex justify-center">
                 <img src="{{ asset('yayasan-darul-jalal.jpg') }}" alt="Logo" class="w-24">
             </div>
