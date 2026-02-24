@@ -73,14 +73,14 @@ class PembayaranController extends Controller
         // Create pembayaran record
         $pembayaran = Pembayaran::create([
             'tagihan_id' => $tagihan->id,
-            'siswa_id' => $tagihan->siswa_id,
             'wali_murid_id' => auth()->user()->waliMurid->id,
+            'metode_pembayaran' => 'transfer',
             'jumlah_bayar' => $validated['jumlah_bayar'],
             'rekening_tujuan_id' => $validated['rekening_tujuan_id'],
             'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
-            'bukti_transfer' => $buktiPath,
+            'bukti_pembayaran' => $buktiPath,
             'status_konfirmasi' => 'pending',
-            'keterangan' => 'Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
+            'catatan' => 'Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
         ]);
 
         return redirect()->route('wali.tagihan.show', $tagihan)->with('success', 'Pembayaran berhasil diajukan, menunggu konfirmasi');

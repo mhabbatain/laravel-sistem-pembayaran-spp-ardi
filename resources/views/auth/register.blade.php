@@ -15,7 +15,7 @@
             transform: translate(-50%, -50%);
             width: 500px;
             height: 500px;
-            background-image: url('{{ asset(' yayasan-darul-jalal.jpg') }}');
+            background-image: url('{{ asset('yayasan-darul-jalal.jpg') }}');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
