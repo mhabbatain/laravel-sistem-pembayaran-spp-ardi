@@ -81,6 +81,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('tagihan/{tagihan}/detail', [TagihanController::class, 'detail'])->name('tagihan.detail');
     Route::post('tagihan/{tagihan}/bayar', [TagihanController::class, 'bayar'])->name('tagihan.bayar');
     Route::get('tagihan/{tagihan}/cetak-kartu', [TagihanController::class, 'cetakKartu'])->name('tagihan.cetak-kartu');
+    Route::get('tagihan/{tagihan}/kirim-pengingat', [TagihanController::class, 'kirimPengingat'])->name('tagihan.kirim-pengingat');
+    Route::get('tagihan-massal/kirim-pengingat', [TagihanController::class, 'kirimPengingatMassal'])->name('tagihan.kirim-pengingat-massal');
 
     // Pembayaran
     Route::resource('pembayaran', PembayaranController::class);

@@ -4,10 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tagihan;
+use App\Models\Pengaturan;
+use App\Services\WhatsAppNotificationService;
+use App\Jobs\SendWhatsAppTagihanNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TagihanController extends Controller
 {
+    protected WhatsAppNotificationService $waNotification;
+
+    public function __construct(WhatsAppNotificationService $waNotification)
+    {
+        $this->waNotification = $waNotification;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -110,6 +120,12 @@ class TagihanController extends Controller
                 'jumlah' => $biaya->jumlah,
                 'is_selected' => true,
             ]);
+        }
+
+        // Dispatch WhatsApp notification job (background)
+        $notifyTagihan = Pengaturan::where('key', 'whatsapp_notify_tagihan')->first()?->value ?? '1';
+        if ($notifyTagihan === '1') {
+            SendWhatsAppTagihanNotification::dispatch($tagihan);
         }
 
         return redirect()->route('admin.tagihan.index')
@@ -239,5 +255,56 @@ class TagihanController extends Controller
     {
         $tagihan->load(['siswa', 'detailTagihan.biaya']);
         return view('admin.tagihan.cetak-kartu', compact('tagihan'));
+    }
+
+    /**
+     * Kirim pengingat tagihan via WhatsApp
+     */
+    public function kirimPengingat(Tagihan $tagihan)
+    {
+        try {
+            $result = $this->waNotification->sendReminderNotification($tagihan);
+            
+            if ($result['success']) {
+                return redirect()->back()->with('success', 'Notifikasi pengingat berhasil dikirim ke WhatsApp wali murid.');
+            }
+            
+            return redirect()->back()->with('error', 'Gagal mengirim notifikasi: ' . ($result['message'] ?? 'Unknown error'));
+        } catch (\Exception $e) {
+            Log::error('Manual reminder error', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengirim notifikasi.');
+        }
+    }
+
+    /**
+     * Kirim pengingat tagihan massal via WhatsApp
+     */
+    public function kirimPengingatMassal(Request $request)
+    {
+        $query = Tagihan::where('status', '!=', 'lunas');
+
+        // Apply same filters as index for bulk reminder
+        if ($request->has('bulan') && $request->bulan != '') {
+            $query->where('bulan', $request->bulan);
+        }
+        if ($request->has('tahun') && $request->tahun != '') {
+            $query->where('tahun', $request->tahun);
+        }
+
+        $tagihanList = $query->get();
+        $total = $tagihanList->count();
+
+        if ($total === 0) {
+            return redirect()->back()->with('info', 'Tidak ada tagihan yang perlu diingatkan.');
+        }
+
+        $sent = 0;
+        foreach ($tagihanList as $tagihan) {
+            // Dispatch with delay to avoid rate limiting
+            SendWhatsAppTagihanNotification::dispatch($tagihan)->delay(now()->addSeconds(5 * $sent));
+            $sent++;
+        }
+
+        return redirect()->back()->with('success', "{$sent} notifikasi pengingat sedang diproses di background.");
     }
 }
