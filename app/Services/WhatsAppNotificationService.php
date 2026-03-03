@@ -37,9 +37,9 @@ class WhatsAppNotificationService
     /**
      * Format currency
      */
-    protected function formatRupiah(int|float $amount): string
+    protected function formatRupiah($amount): string
     {
-        return 'Rp ' . number_format($amount, 0, ',', '.');
+        return 'Rp ' . number_format((float)($amount ?? 0), 0, ',', '.');
     }
 
     /**
@@ -84,7 +84,8 @@ class WhatsAppNotificationService
     {
         $detailBiaya = '';
         foreach ($tagihan->detailTagihan as $detail) {
-            $detailBiaya .= "• {$detail->biaya->nama}: {$this->formatRupiah($detail->jumlah)}\n";
+            $namaBiaya = $detail->biaya->nama_biaya ?? $detail->biaya->nama ?? 'Biaya';
+            $detailBiaya .= "• {$namaBiaya}: {$this->formatRupiah($detail->jumlah)}\n";
         }
 
         return "🔔 *TAGIHAN BARU*\n\n" .
@@ -145,6 +146,7 @@ class WhatsAppNotificationService
     protected function buildPembayaranKonfirmasiMessage(Pembayaran $pembayaran, Tagihan $tagihan, Siswa $siswa, string $namaSekolah): string
     {
         $statusTagihan = $tagihan->status === 'lunas' ? '✅ LUNAS' : "⏳ Sisa: {$this->formatRupiah($tagihan->sisa_tagihan)}";
+        $tanggalPesan = $pembayaran->tanggal_pembayaran ? $pembayaran->tanggal_pembayaran->format('d/m/Y') : now()->format('d/m/Y');
 
         return "✅ *PEMBAYARAN DIKONFIRMASI*\n\n" .
             "Assalamu'alaikum Wr. Wb.\n\n" .
@@ -153,10 +155,10 @@ class WhatsAppNotificationService
             "📋 *Detail Pembayaran*\n" .
             "━━━━━━━━━━━━━━━━\n" .
             "No. Transaksi: *#{$pembayaran->id}*\n" .
-            "Tanggal: *{$pembayaran->tanggal_bayar->format('d/m/Y')}*\n" .
+            "Tanggal: *{$tanggalPesan}*\n" .
             "Periode: *{$tagihan->bulan} {$tagihan->tahun}*\n" .
             "Nama: *{$siswa->nama}*\n\n" .
-            "*Jumlah Dibayar: {$this->formatRupiah($pembayaran->jumlah)}*\n\n" .
+            "*Jumlah Dibayar: {$this->formatRupiah($pembayaran->jumlah_bayar)}*\n\n" .
             "Status Tagihan: {$statusTagihan}\n" .
             "━━━━━━━━━━━━━━━━\n\n" .
             "Terima kasih atas pembayarannya.\n\n" .
