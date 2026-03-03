@@ -311,10 +311,22 @@ async function getQrCode() {
             startStatusCheck();
             
             // Refresh QR code every 30 seconds
-            qrRefreshInterval = setInterval(getQrCode, 30000);
+            if (!qrRefreshInterval) {
+                qrRefreshInterval = setInterval(getQrCode, 30000);
+            }
+        } else if (data.connected) {
+            // Already connected, update UI and stop intervals
+            updateConnectionUI(true, data.phoneNumber, data.profileName);
+            if (qrRefreshInterval) {
+                clearInterval(qrRefreshInterval);
+                qrRefreshInterval = null;
+            }
         } else {
             document.getElementById('qr-placeholder').classList.remove('hidden');
-            alert(data.message || 'Gagal mendapatkan QR Code');
+            // Only alert if it's a real failure and not already connected
+            if (!data.connected) {
+                alert(data.message || 'Gagal mendapatkan QR Code');
+            }
         }
     } catch (error) {
         document.getElementById('qr-loading').classList.add('hidden');

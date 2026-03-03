@@ -90,6 +90,16 @@ class WhatsAppService
         $name = $instanceName ?? $this->instanceName;
 
         try {
+            // First check if already connected
+            $status = $this->getConnectionStatus($name);
+            if ($status['connected']) {
+                return [
+                    'success' => true,
+                    'connected' => true,
+                    'message' => 'WhatsApp sudah terhubung.',
+                ];
+            }
+
             // Try multiple times as QR code generation may take a moment
             $maxRetries = 5;
             $retryDelay = 2; // seconds
@@ -116,6 +126,18 @@ class WhatsAppService
                             'qrcode' => $qrcode,
                             'pairingCode' => $data['pairingCode'] ?? null,
                             'data' => $data,
+                        ];
+                    }
+                }
+                
+                // If instance is already connected, the API might return error
+                if ($response->status() === 400 || $response->status() === 403) {
+                    $responseData = $response->json();
+                    if (str_contains(json_encode($responseData), 'connected') || str_contains(json_encode($responseData), 'open')) {
+                        return [
+                            'success' => true,
+                            'connected' => true,
+                            'message' => 'WhatsApp sudah terhubung.',
                         ];
                     }
                 }
@@ -338,7 +360,9 @@ class WhatsAppService
         try {
             $response = $this->http()->post("{$this->apiUrl}/message/sendText/{$name}", [
                 'number' => $formattedPhone,
-                'text' => $message,
+                'textMessage' => [
+                    'text' => $message
+                ],
             ]);
 
             if ($response->successful()) {
@@ -385,9 +409,12 @@ class WhatsAppService
         try {
             $response = $this->http()->post("{$this->apiUrl}/message/sendMedia/{$name}", [
                 'number' => $formattedPhone,
-                'mediatype' => 'image',
-                'media' => $imageUrl,
-                'caption' => $caption,
+                'imageMessage' => [
+                    'image' => $imageUrl
+                ],
+                'options' => [
+                    'caption' => $caption
+                ]
             ]);
 
             if ($response->successful()) {
@@ -429,10 +456,13 @@ class WhatsAppService
         try {
             $response = $this->http()->post("{$this->apiUrl}/message/sendMedia/{$name}", [
                 'number' => $formattedPhone,
-                'mediatype' => 'document',
-                'media' => $documentUrl,
-                'fileName' => $filename,
-                'caption' => $caption,
+                'documentMessage' => [
+                    'document' => $documentUrl,
+                    'fileName' => $filename
+                ],
+                'options' => [
+                    'caption' => $caption
+                ]
             ]);
 
             if ($response->successful()) {

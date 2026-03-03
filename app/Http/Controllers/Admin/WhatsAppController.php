@@ -74,8 +74,11 @@ class WhatsAppController extends Controller
         if ($result['success']) {
             return response()->json([
                 'success' => true,
-                'qrcode' => $result['qrcode'],
+                'qrcode' => $result['qrcode'] ?? null,
                 'pairingCode' => $result['pairingCode'] ?? null,
+                'connected' => $result['connected'] ?? false,
+                'phoneNumber' => $result['phoneNumber'] ?? null,
+                'profileName' => $result['profileName'] ?? null,
             ]);
         }
 
