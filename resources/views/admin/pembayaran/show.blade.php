@@ -141,6 +141,12 @@
 
                 <form action="{{ route('admin.pembayaran.tolak', $pembayaran->id) }}" method="POST">
                     @csrf
+                    <div class="mb-3">
+                        <label for="catatan" class="block text-sm font-medium text-gray-700 mb-1">Alasan Penolakan</label>
+                        <textarea name="catatan" id="catatan" rows="3" 
+                            class="w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                            placeholder="Contoh: Bukti tidak terbaca/salah upload"></textarea>
+                    </div>
                     <button type="submit"
                         class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
                         onclick="return confirm('Yakin ingin menolak pembayaran ini?')">

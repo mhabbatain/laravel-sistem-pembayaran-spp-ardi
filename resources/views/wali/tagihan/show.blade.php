@@ -124,11 +124,18 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{
                             number_format($bayar->jumlah_bayar, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span
-                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {{ $bayar->status_konfirmasi === 'dikonfirmasi' ? 'bg-green-100 text-green-800' : ($bayar->status_konfirmasi === 'ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                {{ ucfirst($bayar->status_konfirmasi) }}
-                            </span>
+                            <div class="flex flex-col">
+                                <span
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {{ $bayar->status_konfirmasi === 'dikonfirmasi' ? 'bg-green-100 text-green-800' : ($bayar->status_konfirmasi === 'ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                    {{ ucfirst($bayar->status_konfirmasi) }}
+                                </span>
+                                @if($bayar->status_konfirmasi === 'ditolak' && $bayar->catatan)
+                                    <span class="text-[10px] text-red-600 mt-1 italic max-w-[150px] break-words">
+                                        Alasan: {{ $bayar->catatan }}
+                                    </span>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

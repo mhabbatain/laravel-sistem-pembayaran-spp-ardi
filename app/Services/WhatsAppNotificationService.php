@@ -167,6 +167,66 @@ class WhatsAppNotificationService
     }
 
     /**
+     * Send notification for payment rejection
+     */
+    public function sendPembayaranDitolakNotification(Pembayaran $pembayaran): array
+    {
+        if (!$this->isEnabled()) {
+            return ['success' => false, 'message' => 'Notifikasi WhatsApp tidak aktif'];
+        }
+
+        $tagihan = $pembayaran->tagihan;
+        $siswa = $tagihan->siswa;
+        $waliMurid = $siswa->waliMurid;
+
+        if (!$waliMurid || !$waliMurid->user?->no_hp) {
+            return ['success' => false, 'message' => 'Nomor HP wali murid tidak tersedia'];
+        }
+
+        $namaSekolah = $this->getNamaSekolah();
+        $message = $this->buildPembayaranDitolakMessage($pembayaran, $tagihan, $siswa, $namaSekolah);
+
+        $result = $this->whatsApp->sendMessage($waliMurid->user->no_hp, $message);
+
+        if ($result['success']) {
+            Log::info('Payment rejection notification sent', [
+                'pembayaran_id' => $pembayaran->id,
+                'phone' => $waliMurid->user->no_hp,
+            ]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Build payment rejection message template
+     */
+    protected function buildPembayaranDitolakMessage(Pembayaran $pembayaran, Tagihan $tagihan, Siswa $siswa, string $namaSekolah): string
+    {
+        $alasan = $pembayaran->catatan ?? 'Bukti pembayaran tidak valid atau tidak terbaca.';
+        $tanggalPesan = $pembayaran->tanggal_pembayaran ? $pembayaran->tanggal_pembayaran->format('d/m/Y') : now()->format('d/m/Y');
+
+        return "❌ *PEMBAYARAN DITOLAK*\n\n" .
+            "Assalamu'alaikum Wr. Wb.\n\n" .
+            "Bapak/Ibu Wali dari *{$siswa->nama}*,\n\n" .
+            "Mohon maaf, pembayaran Anda telah ditolak.\n\n" .
+            "📋 *Detail Pembayaran*\n" .
+            "━━━━━━━━━━━━━━━━\n" .
+            "No. Transaksi: *#{$pembayaran->id}*\n" .
+            "Tanggal: *{$tanggalPesan}*\n" .
+            "Periode: *{$tagihan->bulan} {$tagihan->tahun}*\n" .
+            "Nama: *{$siswa->nama}*\n" .
+            "*Jumlah: {$this->formatRupiah($pembayaran->jumlah_bayar)}*\n" .
+            "━━━━━━━━━━━━━━━━\n\n" .
+            "⚠️ *Alasan Penolakan:*\n" .
+            "_{$alasan}_\n\n" .
+            "Mohon lakukan pembayaran ulang atau hubungi bagian administrasi.\n\n" .
+            "Terima kasih atas perhatiannya.\n\n" .
+            "Wassalamu'alaikum Wr. Wb.\n\n" .
+            "_*{$namaSekolah}*_";
+    }
+
+    /**
      * Send payment reminder notification
      */
     public function sendReminderNotification(Tagihan $tagihan): array

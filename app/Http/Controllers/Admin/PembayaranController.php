@@ -90,13 +90,24 @@ class PembayaranController extends Controller
     /**
      * Tolak pembayaran
      */
-    public function tolak(Pembayaran $pembayaran)
+    public function tolak(Request $request, Pembayaran $pembayaran)
     {
         $pembayaran->update([
             'status_konfirmasi' => 'ditolak',
             'tanggal_konfirmasi' => now(),
             'dikonfirmasi_oleh' => auth()->id(),
+            'catatan' => $request->catatan,
         ]);
+
+        // Send WhatsApp notification
+        $notifyPembayaran = Pengaturan::where('key', 'whatsapp_notify_pembayaran')->first()?->value ?? '1';
+        if ($notifyPembayaran === '1') {
+            try {
+                $this->waNotification->sendPembayaranDitolakNotification($pembayaran);
+            } catch (\Exception $e) {
+                Log::error('Failed to send WhatsApp notification', ['error' => $e->getMessage()]);
+            }
+        }
 
         return redirect()->route('admin.pembayaran.show', $pembayaran)->with('success', 'Pembayaran ditolak');
     }
