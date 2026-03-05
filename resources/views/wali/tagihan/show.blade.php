@@ -124,9 +124,9 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Rp {{
                             number_format($bayar->jumlah_bayar, 0, ',', '.') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col items-start">
                                 <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     {{ $bayar->status_konfirmasi === 'dikonfirmasi' ? 'bg-green-100 text-green-800' : ($bayar->status_konfirmasi === 'ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
                                     {{ ucfirst($bayar->status_konfirmasi) }}
                                 </span>
@@ -168,7 +168,10 @@
                 <span>Download Invoice</span>
             </a>
 
-            @if($tagihan->status !== 'lunas')
+            @php
+                $hasPending = $tagihan->pembayaran->where('status_konfirmasi', 'pending')->count() > 0;
+            @endphp
+            @if($tagihan->status !== 'lunas' && !$hasPending)
             <a href="{{ route('wali.pembayaran.konfirmasi', $tagihan) }}"
                 class="px-4 py-2 bg-green-700 text-white rounded-lg hover:bg-green-800 inline-flex items-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

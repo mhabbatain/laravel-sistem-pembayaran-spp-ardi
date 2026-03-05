@@ -65,9 +65,14 @@
                                 class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition-colors">Detail</a>
                             <a href="{{ route('wali.pdf.invoice-tagihan', $item) }}"
                                 class="inline-flex items-center px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded hover:bg-gray-700 transition-colors">Invoice</a>
-                            @if($item->sisa_tagihan_terpilih > 0)
+                            @php
+                                $hasPending = $item->pembayaran->where('status_konfirmasi', 'pending')->count() > 0;
+                            @endphp
+                            @if($item->sisa_tagihan_terpilih > 0 && !$hasPending)
                             <a href="{{ route('wali.pembayaran.konfirmasi', $item) }}"
                                 class="inline-flex items-center px-3 py-1 bg-green-600 text-white text-xs font-medium rounded hover:bg-green-700 transition-colors">Bayar</a>
+                            @elseif($hasPending)
+                            <span class="inline-flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Pending</span>
                             @endif
                         </td>
                     </tr>

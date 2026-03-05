@@ -60,7 +60,8 @@
         </a>
 
         <!-- Pesan Baru -->
-        <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <a href="{{ route('admin.pembayaran.index') }}"
+            class="bg-white overflow-hidden shadow-sm rounded-lg hover:shadow-md transition-shadow">
             <div class="p-6">
                 <div class="flex items-center">
                     <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
@@ -71,13 +72,13 @@
                     </div>
                     <div class="ml-5 w-0 flex-1">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Pesan Baru</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Konfirmasi Pembayaran</dt>
                             <dd class="text-3xl font-semibold text-gray-900">{{ $pesanBaru }}</dd>
                         </dl>
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
 
         <!-- Tagihan Baru -->
         <a href="{{ route('admin.tagihan.index') }}"

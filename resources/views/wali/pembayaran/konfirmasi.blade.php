@@ -290,6 +290,20 @@
                 <input type="file" name="bukti_transfer" id="bukti_transfer" accept="image/*" required
                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('bukti_transfer') ? 'border-red-500' : 'border-gray-300' }}">
                 <p class="mt-1 text-sm text-gray-500">Format: JPG, PNG, JPEG. Maksimal 2MB</p>
+                
+                <!-- Image Preview Container -->
+                <div id="preview-container" class="mt-4 hidden">
+                    <p class="text-sm font-medium text-gray-700 mb-2">Preview Bukti:</p>
+                    <div class="relative inline-block border rounded-lg overflow-hidden bg-gray-50">
+                        <img id="image-preview" src="#" alt="Preview" class="max-w-full h-auto max-h-64">
+                        <button type="button" id="remove-preview" class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
                 @error('bukti_transfer')
                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                 @enderror
@@ -367,6 +381,32 @@
     
     // Initial calculation
     updateTotal();
+
+    // Image Preview Logic
+    const buktiInput = document.getElementById('bukti_transfer');
+    const previewContainer = document.getElementById('preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removePreviewBtn = document.getElementById('remove-preview');
+
+    buktiInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                previewContainer.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.classList.add('hidden');
+        }
+    });
+
+    removePreviewBtn.addEventListener('click', function() {
+        buktiInput.value = '';
+        previewContainer.classList.add('hidden');
+        imagePreview.src = '#';
+    });
 });
 
 // Metode Pembayaran functions
