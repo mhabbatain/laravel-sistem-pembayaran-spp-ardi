@@ -12,9 +12,21 @@ class SiswaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = Siswa::with('waliMurid')->latest()->paginate(10);
+        $query = Siswa::with('waliMurid')->latest();
+
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->q . '%')
+                    ->orWhere('nisn', 'like', '%' . $request->q . '%')
+                    ->orWhereHas('waliMurid.user', function ($q) use ($request) {
+                        $q->where('name', 'like', '%' . $request->q . '%');
+                    });
+            });
+        }
+
+        $siswa = $query->paginate(10)->withQueryString();
         return view('admin.siswa.index', compact('siswa'));
     }
 

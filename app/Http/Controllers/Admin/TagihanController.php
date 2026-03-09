@@ -79,8 +79,6 @@ class TagihanController extends Controller
             'bulan' => 'required|string',
             'tahun' => 'required|string',
             'tanggal_tagihan' => 'required|date',
-            'biaya_id' => 'required|array',
-            'biaya_id.*' => 'exists:biaya,id',
         ]);
 
         // Check if tagihan already exists for this siswa, bulan, tahun
@@ -95,8 +93,16 @@ class TagihanController extends Controller
                 ->with('error', 'Tagihan untuk siswa ini pada periode yang sama sudah ada.');
         }
 
-        // Calculate total tagihan from selected biaya
-        $totalTagihan = \App\Models\Biaya::whereIn('id', $request->biaya_id)->sum('jumlah');
+        // Get all available fees automatically
+        $biayaList = \App\Models\Biaya::all();
+        
+        if ($biayaList->isEmpty()) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Data biaya belum ada. Silakan buat master data biaya terlebih dahulu.');
+        }
+
+        $totalTagihan = $biayaList->sum('jumlah');
 
         // Create tagihan
         $tagihan = Tagihan::create([
@@ -111,12 +117,11 @@ class TagihanController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        // Create detail tagihan
-        foreach ($request->biaya_id as $biayaId) {
-            $biaya = \App\Models\Biaya::find($biayaId);
+        // Create detail tagihan for all biaya
+        foreach ($biayaList as $biaya) {
             \App\Models\DetailTagihan::create([
                 'tagihan_id' => $tagihan->id,
-                'biaya_id' => $biayaId,
+                'biaya_id' => $biaya->id,
                 'jumlah' => $biaya->jumlah,
                 'is_selected' => true,
             ]);

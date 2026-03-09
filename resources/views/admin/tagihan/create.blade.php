@@ -96,18 +96,18 @@
                 @enderror
             </div>
 
-            <!-- Biaya (Checkboxes) -->
-            <div>
+            <!-- Rincian Biaya (Otomatis) -->
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
                 <label class="block text-sm font-medium text-gray-700 mb-3">
-                    Pilih Biaya <span class="text-red-500">*</span>
+                    Rincian Biaya <span class="text-xs font-normal text-gray-500">(Otomatis Terpilih Semua)</span>
                 </label>
-                <div class="space-y-2 border {{ $errors->has('biaya_id') ? 'border-red-500' : 'border-gray-300' }} rounded-lg p-4 max-h-64 overflow-y-auto">
+                <div class="divide-y divide-gray-200">
                     @foreach($biaya as $item)
-                    <label class="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div class="flex items-center justify-between py-2">
                         <div class="flex items-center space-x-3">
-                            <input type="checkbox" name="biaya_id[]" value="{{ $item->id }}" 
-                                {{ is_array(old('biaya_id')) && in_array($item->id, old('biaya_id')) ? 'checked' : '' }}
-                                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
                             <div>
                                 <span class="font-medium text-gray-900">{{ $item->nama_biaya }}</span>
                                 @if($item->kode)
@@ -116,15 +116,10 @@
                             </div>
                         </div>
                         <span class="text-sm font-semibold text-gray-700">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</span>
-                    </label>
+                    </div>
                     @endforeach
                 </div>
-                @error('biaya_id')
-                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                @enderror
-                @error('biaya_id.*')
-                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                @enderror
+                <p class="mt-4 text-xs text-blue-600 italic">* Semua biaya di atas akan otomatis disertakan dalam tagihan ini. Wali santri dapat memilih komponen yang ingin dibayar pada saat melakukan konfirmasi pembayaran.</p>
             </div>
 
             <!-- Buttons -->

@@ -48,6 +48,7 @@
             <!-- Jumlah Bayar (Hidden, calculated automatically) -->
             <input type="hidden" name="jumlah_bayar" id="jumlah_bayar" value="0">
             <input type="hidden" name="metode_pembayaran_id" id="metode_pembayaran_id" value="">
+            <input type="hidden" name="is_ewallet" id="is_ewallet" value="0">
 
             <!-- Detail Biaya -->
             <div class="mb-6">
@@ -129,7 +130,7 @@
                         <div class="flex flex-wrap gap-4">
                             @foreach($metodePembayaran['bank_transfer'] as $metode)
                             <button type="button"
-                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}')"
+                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}', '{{ $metode->kategori }}')"
                                 class="metode-btn rounded hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 border-gray-200 border"
                                 data-metode-id="{{ $metode->id }}">
                                 @if($metode->logo)
@@ -151,7 +152,7 @@
                         <div class="flex flex-wrap gap-4">
                             @foreach($metodePembayaran['e_wallet'] as $metode)
                             <button type="button"
-                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}')"
+                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}', '{{ $metode->kategori }}')"
                                 class="metode-btn rounded hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 border-gray-200 border"
                                 data-metode-id="{{ $metode->id }}">
                                 @if($metode->logo)
@@ -174,7 +175,7 @@
                         <div class="flex flex-wrap gap-4">
                             @foreach($metodePembayaran['kartu'] as $metode)
                             <button type="button"
-                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}')"
+                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}', '{{ $metode->kategori }}')"
                                 class="metode-btn p-1 rounded hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                 data-metode-id="{{ $metode->id }}">
                                 @if($metode->logo)
@@ -196,7 +197,7 @@
                         <div class="flex flex-wrap gap-4">
                             @foreach($metodePembayaran['qris'] as $metode)
                             <button type="button"
-                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}')"
+                                onclick="selectMetode({{ $metode->id }}, '{{ $metode->nama }}', '{{ $metode->nomor_rekening }}', '{{ $metode->nama_pemilik }}', '{{ $metode->kategori }}')"
                                 class="metode-btn p-1 rounded hover:opacity-70 transition-opacity focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                                 data-metode-id="{{ $metode->id }}">
                                 @if($metode->logo)
@@ -287,9 +288,13 @@
                 <label for="bukti_transfer" class="block text-sm font-medium text-gray-700 mb-2">
                     Bukti Transfer <span class="text-red-500">*</span>
                 </label>
-                <input type="file" name="bukti_transfer" id="bukti_transfer" accept="image/*" required
-                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('bukti_transfer') ? 'border-red-500' : 'border-gray-300' }}">
-                <p class="mt-1 text-sm text-gray-500">Format: JPG, PNG, JPEG. Maksimal 2MB</p>
+                <div id="upload-section">
+                    <input type="file" name="bukti_transfer" id="bukti_transfer" accept="image/*" required
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent {{ $errors->has('bukti_transfer') ? 'border-red-500' : 'border-gray-300' }}">
+                    <p class="mt-1 text-sm text-gray-500">Format: JPG, PNG, JPEG. Maksimal 2MB</p>
+                </div>
+                
+                <!-- No text notice here anymore -->
                 
                 <!-- Image Preview Container -->
                 <div id="preview-container" class="mt-4 hidden">
@@ -407,47 +412,112 @@
         previewContainer.classList.add('hidden');
         imagePreview.src = '#';
     });
+
+    // Handle form submit to show auto proof for e-wallet
+    const paymentForm = document.querySelector('form[action*="store-konfirmasi"]');
+    paymentForm.addEventListener('submit', function(e) {
+        const isEwallet = document.getElementById('is_ewallet').value === '1';
+        if (isEwallet && previewContainer.classList.contains('hidden')) {
+            e.preventDefault();
+            
+            // Show preview
+            previewContainer.classList.remove('hidden');
+            
+            // Add a temporary loading state to the button
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memproses...';
+            
+            // Small delay to let user see the "proof" before it submits
+            setTimeout(() => {
+                paymentForm.submit();
+            }, 800);
+        }
+    });
 });
 
 // Metode Pembayaran functions
-function selectMetode(id, nama, rekening, pemilik) {
-    // Update hidden input
+function selectMetode(id, nama, rekening, pemilik, kategori) {
+    // Update hidden inputs
     document.getElementById('metode_pembayaran_id').value = id;
+    document.getElementById('is_ewallet').value = (kategori === 'e_wallet' ? '1' : '0');
     
+    // UI elements
+    const uploadSection = document.getElementById('upload-section');
+    const buktiInput = document.getElementById('bukti_transfer');
+    const previewContainer = document.getElementById('preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removePreviewBtn = document.getElementById('remove-preview');
+    const rekeningSection = document.getElementById('rekening-tujuan-section');
+    const rekeningSelect = document.getElementById('rekening_tujuan_id');
+    
+    if (kategori === 'e_wallet') {
+        // Hide upload
+        uploadSection.classList.add('hidden');
+        buktiInput.required = false;
+        
+        // Prepare auto proof but keep hidden until submit
+        imagePreview.src = "{{ asset('pembayaran/bukti-dana.png') }}";
+        previewContainer.classList.add('hidden');
+        removePreviewBtn.classList.add('hidden');
+        
+        // Hide destination account
+        rekeningSection.classList.add('hidden');
+        rekeningSelect.required = false;
+        rekeningSelect.value = '';
+    } else {
+        // Show upload section
+        uploadSection.classList.remove('hidden');
+        buktiInput.required = true;
+        if (imagePreview.src.includes('bukti-dana.png')) {
+            imagePreview.src = '#';
+            previewContainer.classList.add('hidden');
+        }
+        removePreviewBtn.classList.remove('hidden');
+        
+        // Show destination account
+        rekeningSection.classList.remove('hidden');
+        rekeningSelect.required = true;
+
+        // Auto-select matching rekening if available (banks only)
+        const options = rekeningSelect.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].text.toLowerCase().includes(nama.toLowerCase().split(' ')[1] || nama.toLowerCase())) {
+                rekeningSelect.value = options[i].value;
+                break;
+            }
+        }
+    }
+
     // Update selected info display
     document.getElementById('selected-metode-name').textContent = nama;
     document.getElementById('selected-metode-rekening').textContent = rekening || '-';
     document.getElementById('selected-metode-pemilik').textContent = pemilik || '-';
     document.getElementById('selected-metode-info').classList.remove('hidden');
     
-    // Highlight selected button with ring
-    document.querySelectorAll('.metode-btn').forEach(btn => {
-        btn.classList.remove('ring-2', 'ring-green-500', 'ring-offset-2');
-    });
-    
+    // Highlight button
+    document.querySelectorAll('.metode-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-green-500', 'ring-offset-2'));
     const selectedBtn = document.querySelector(`.metode-btn[data-metode-id="${id}"]`);
-    if (selectedBtn) {
-        selectedBtn.classList.add('ring-2', 'ring-green-500', 'ring-offset-2');
-    }
-    
-    // Auto-select matching rekening if available
-    const rekeningSelect = document.getElementById('rekening_tujuan_id');
-    const options = rekeningSelect.options;
-    for (let i = 0; i < options.length; i++) {
-        if (options[i].text.toLowerCase().includes(nama.toLowerCase().split(' ')[1] || nama.toLowerCase())) {
-            rekeningSelect.value = options[i].value;
-            break;
-        }
-    }
+    if (selectedBtn) selectedBtn.classList.add('ring-2', 'ring-green-500', 'ring-offset-2');
 }
 
 function clearMetode() {
     document.getElementById('metode_pembayaran_id').value = '';
+    document.getElementById('is_ewallet').value = '0';
     document.getElementById('selected-metode-info').classList.add('hidden');
     
-    document.querySelectorAll('.metode-btn').forEach(btn => {
-        btn.classList.remove('ring-2', 'ring-green-500', 'ring-offset-2');
-    });
+    // Reset sections
+    document.getElementById('upload-section').classList.remove('hidden');
+    document.getElementById('bukti_transfer').required = true;
+    document.getElementById('rekening-tujuan-section').classList.remove('hidden');
+    document.getElementById('rekening_tujuan_id').required = true;
+    
+    // Clear preview
+    document.getElementById('image-preview').src = '#';
+    document.getElementById('preview-container').classList.add('hidden');
+    document.getElementById('remove-preview').classList.remove('hidden');
+
+    document.querySelectorAll('.metode-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-green-500', 'ring-offset-2'));
 }
 </script>
 @endsection

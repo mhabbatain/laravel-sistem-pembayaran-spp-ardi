@@ -11,9 +11,24 @@ class WaliMuridController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $waliMurid = WaliMurid::with(['user', 'siswa'])->latest()->paginate(10);
+        $query = WaliMurid::with(['user', 'siswa'])->latest();
+
+        if ($request->filled('q')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('user', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->q . '%')
+                        ->orWhere('email', 'like', '%' . $request->q . '%')
+                        ->orWhere('no_hp', 'like', '%' . $request->q . '%');
+                })->orWhereHas('siswa', function ($q) use ($request) {
+                    $q->where('nama', 'like', '%' . $request->q . '%')
+                        ->orWhere('nisn', 'like', '%' . $request->q . '%');
+                });
+            });
+        }
+
+        $waliMurid = $query->paginate(10)->withQueryString();
         return view('admin.wali-murid.index', compact('waliMurid'));
     }
 
