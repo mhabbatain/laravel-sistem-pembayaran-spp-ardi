@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tagihan;
 use App\Models\Pembayaran;
 use App\Models\MetodePembayaran;
+use App\Services\PaymentGatewayService;
 use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
@@ -70,74 +71,56 @@ class PembayaranController extends Controller
             return back()->withErrors(['jumlah_bayar' => 'Jumlah pembayaran tidak sesuai dengan komponen yang dipilih. Total: Rp ' . number_format($totalPilihan, 0, ',', '.')])->withInput();
         }
 
-        // Handle Proof of Payment (Bukti Transfer)
-        if ($metode->kategori === 'e_wallet') {
-            // Use default proof for e-wallet
-            $defaultFile = 'pembayaran/bukti-dana.png';
-            $extension = pathinfo($defaultFile, PATHINFO_EXTENSION);
-            $newFileName = 'bukti-transfer/' . uniqid() . '_auto.' . $extension;
+        // Determine if this is a gateway payment (e-wallet, QRIS, kartu)
+        $isGatewayPayment = in_array($metode->kategori, ['e_wallet', 'qris', 'kartu']);
+
+        if ($isGatewayPayment) {
+            // ===========================================
+            // FLOW PAYMENT GATEWAY (Simulasi)
+            // ===========================================
             
-            // Check if file exists in public
-            if (file_exists(public_path($defaultFile))) {
-                // Copy to storage/app/public/bukti-transfer/
-                if (!\Illuminate\Support\Facades\Storage::disk('public')->exists('bukti-transfer')) {
-                    \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('bukti-transfer');
-                }
-                
-                copy(public_path($defaultFile), storage_path('app/public/' . $newFileName));
-                $buktiPath = $newFileName;
-            } else {
-                // Fallback to upload if default file is missing
-                if (!$request->hasFile('bukti_transfer')) {
-                     return back()->withErrors(['bukti_transfer' => 'File bukti-dana.png tidak ditemukan di sistem, silakan upload bukti secara manual.'])->withInput();
-                }
-                $buktiPath = $request->file('bukti_transfer')->store('bukti-transfer', 'public');
-            }
+            // Create pembayaran record dengan status pending
+            $pembayaran = Pembayaran::create([
+                'tagihan_id' => $tagihan->id,
+                'wali_murid_id' => auth()->user()->waliMurid->id,
+                'metode_pembayaran' => 'transfer',
+                'jumlah_bayar' => $validated['jumlah_bayar'],
+                'rekening_tujuan_id' => null,
+                'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
+                'bukti_pembayaran' => null,
+                'status_konfirmasi' => 'pending',
+                'catatan' => 'Via Payment Gateway (' . $metode->nama . '). Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
+            ]);
+
+            // Create transaksi gateway via service
+            $gatewayService = app(PaymentGatewayService::class);
+            $transaksi = $gatewayService->createTransaction($pembayaran, $metode);
+
+            // Redirect ke halaman gateway checkout
+            return redirect()->route('gateway.checkout', $transaksi->token);
+
         } else {
-            // Traditional upload for other methods
+            // ===========================================
+            // FLOW MANUAL BANK TRANSFER (tetap sama)
+            // ===========================================
+
+            // Handle Proof of Payment (Bukti Transfer)
             $buktiPath = $request->file('bukti_transfer')->store('bukti-transfer', 'public');
+
+            // Create pembayaran record
+            $pembayaran = Pembayaran::create([
+                'tagihan_id' => $tagihan->id,
+                'wali_murid_id' => auth()->user()->waliMurid->id,
+                'metode_pembayaran' => 'transfer',
+                'jumlah_bayar' => $validated['jumlah_bayar'],
+                'rekening_tujuan_id' => $validated['rekening_tujuan_id'],
+                'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
+                'bukti_pembayaran' => $buktiPath,
+                'status_konfirmasi' => 'pending',
+                'catatan' => 'Via ' . $metode->nama . '. Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
+            ]);
+
+            return redirect()->route('wali.tagihan.show', $tagihan)->with('success', 'Pembayaran berhasil diajukan, menunggu konfirmasi admin.');
         }
-
-        // Create pembayaran record
-        $pembayaran = Pembayaran::create([
-            'tagihan_id' => $tagihan->id,
-            'wali_murid_id' => auth()->user()->waliMurid->id,
-            'metode_pembayaran' => 'transfer', // Matching enum in DB
-            'jumlah_bayar' => $validated['jumlah_bayar'],
-            'rekening_tujuan_id' => $validated['rekening_tujuan_id'],
-            'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
-            'bukti_pembayaran' => $buktiPath,
-            'status_konfirmasi' => $metode->kategori === 'e_wallet' ? 'dikonfirmasi' : 'pending',
-            'tanggal_konfirmasi' => $metode->kategori === 'e_wallet' ? now() : null,
-            'dikonfirmasi_oleh' => $metode->kategori === 'e_wallet' ? 1 : null, // Auto-confirmed by system (Admin ID 1)
-            'catatan' => 'Via ' . $metode->nama . ($metode->kategori === 'e_wallet' ? ' [Otomatis Lunas]' : '') . '. Komponen: ' . $detailTagihan->pluck('biaya.nama_biaya')->implode(', ')
-        ]);
-
-        // Auto-update tagihan if e-wallet
-        if ($metode->kategori === 'e_wallet') {
-            $tagihan->jumlah_bayar += $pembayaran->jumlah_bayar;
-            $tagihan->sisa_tagihan = $tagihan->total_tagihan - $tagihan->jumlah_bayar;
-            if ($tagihan->sisa_tagihan <= 0) {
-                $tagihan->status = 'lunas';
-            }
-            $tagihan->save();
-
-            // Send WhatsApp notification
-            $waService = app(\App\Services\WhatsAppNotificationService::class);
-            $notifyPembayaran = \App\Models\Pengaturan::where('key', 'whatsapp_notify_pembayaran')->first()?->value ?? '1';
-            if ($notifyPembayaran === '1') {
-                try {
-                    $waService->sendPembayaranKonfirmasiNotification($pembayaran);
-                } catch (\Exception $e) {
-                    \Illuminate\Support\Facades\Log::error('Failed to send WhatsApp notification for auto-payment', ['error' => $e->getMessage()]);
-                }
-            }
-        }
-
-        $message = $metode->kategori === 'e_wallet' 
-            ? 'Pembayaran berhasil dikonfirmasi secara otomatis.' 
-            : 'Pembayaran berhasil diajukan, menunggu konfirmasi.';
-
-        return redirect()->route('wali.tagihan.show', $tagihan)->with('success', $message);
     }
 }

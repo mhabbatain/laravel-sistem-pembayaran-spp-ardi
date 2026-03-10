@@ -314,8 +314,8 @@
                 @enderror
             </div>
 
-            <!-- Info Box -->
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <!-- Info Box: Manual Transfer -->
+            <div id="info-manual" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,6 +337,29 @@
                 </div>
             </div>
 
+            <!-- Info Box: Payment Gateway -->
+            <div id="info-gateway" class="bg-blue-50 border border-blue-200 rounded-lg p-4 hidden">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-blue-800">Pembayaran via Payment Gateway</h3>
+                        <div class="mt-2 text-sm text-blue-700">
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li>Anda akan diarahkan ke halaman <strong>Payment Gateway</strong> untuk menyelesaikan pembayaran</li>
+                                <li>Proses melewati 5 tahap: Inisiasi → Pengiriman Data → Otorisasi → Konfirmasi → Settlement</li>
+                                <li>Pembayaran otomatis dikonfirmasi setelah berhasil melewati semua tahap</li>
+                                <li>Tidak perlu upload bukti transfer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Buttons -->
             <div class="flex items-center justify-end space-x-3 pt-4">
                 <a href="{{ route('wali.tagihan.show', $tagihan) }}"
@@ -345,7 +368,8 @@
                 </a>
                 <button type="submit" id="submit-btn"
                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Kirim Konfirmasi
+                    <span id="btn-text-manual">Kirim Konfirmasi</span>
+                    <span id="btn-text-gateway" class="hidden">🔒 Bayar via Payment Gateway</span>
                 </button>
             </div>
         </form>
@@ -440,7 +464,8 @@
 function selectMetode(id, nama, rekening, pemilik, kategori) {
     // Update hidden inputs
     document.getElementById('metode_pembayaran_id').value = id;
-    document.getElementById('is_ewallet').value = (kategori === 'e_wallet' ? '1' : '0');
+    const isGateway = ['e_wallet', 'qris', 'kartu'].includes(kategori);
+    document.getElementById('is_ewallet').value = isGateway ? '1' : '0';
     
     // UI elements
     const uploadSection = document.getElementById('upload-section');
@@ -450,23 +475,30 @@ function selectMetode(id, nama, rekening, pemilik, kategori) {
     const removePreviewBtn = document.getElementById('remove-preview');
     const rekeningSection = document.getElementById('rekening-tujuan-section');
     const rekeningSelect = document.getElementById('rekening_tujuan_id');
+    const infoManual = document.getElementById('info-manual');
+    const infoGateway = document.getElementById('info-gateway');
+    const btnManual = document.getElementById('btn-text-manual');
+    const btnGateway = document.getElementById('btn-text-gateway');
     
-    if (kategori === 'e_wallet') {
-        // Hide upload
+    if (isGateway) {
+        // Gateway payment: hide upload & rekening, show gateway info
         uploadSection.classList.add('hidden');
         buktiInput.required = false;
-        
-        // Prepare auto proof but keep hidden until submit
-        imagePreview.src = "{{ asset('pembayaran/bukti-dana.png') }}";
         previewContainer.classList.add('hidden');
-        removePreviewBtn.classList.add('hidden');
         
-        // Hide destination account
         rekeningSection.classList.add('hidden');
         rekeningSelect.required = false;
         rekeningSelect.value = '';
+        
+        // Toggle info boxes
+        infoManual.classList.add('hidden');
+        infoGateway.classList.remove('hidden');
+        
+        // Toggle button text
+        btnManual.classList.add('hidden');
+        btnGateway.classList.remove('hidden');
     } else {
-        // Show upload section
+        // Manual bank transfer: show upload, rekening, manual info
         uploadSection.classList.remove('hidden');
         buktiInput.required = true;
         if (imagePreview.src.includes('bukti-dana.png')) {
@@ -475,9 +507,16 @@ function selectMetode(id, nama, rekening, pemilik, kategori) {
         }
         removePreviewBtn.classList.remove('hidden');
         
-        // Show destination account
         rekeningSection.classList.remove('hidden');
         rekeningSelect.required = true;
+
+        // Toggle info boxes
+        infoManual.classList.remove('hidden');
+        infoGateway.classList.add('hidden');
+        
+        // Toggle button text
+        btnManual.classList.remove('hidden');
+        btnGateway.classList.add('hidden');
 
         // Auto-select matching rekening if available (banks only)
         const options = rekeningSelect.options;
@@ -516,6 +555,12 @@ function clearMetode() {
     document.getElementById('image-preview').src = '#';
     document.getElementById('preview-container').classList.add('hidden');
     document.getElementById('remove-preview').classList.remove('hidden');
+    
+    // Reset info boxes & button text
+    document.getElementById('info-manual').classList.remove('hidden');
+    document.getElementById('info-gateway').classList.add('hidden');
+    document.getElementById('btn-text-manual').classList.remove('hidden');
+    document.getElementById('btn-text-gateway').classList.add('hidden');
 
     document.querySelectorAll('.metode-btn').forEach(btn => btn.classList.remove('ring-2', 'ring-green-500', 'ring-offset-2'));
 }

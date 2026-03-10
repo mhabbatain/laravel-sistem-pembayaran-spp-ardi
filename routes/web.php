@@ -152,6 +152,16 @@ Route::middleware(['auth', 'role:wali'])->prefix('wali')->name('wali.')->group(f
     });
 });
 
+// Payment Gateway Simulation (token-based, no auth required - simulates external gateway)
+Route::prefix('gateway')->name('gateway.')->group(function () {
+    Route::get('checkout/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'checkout'])->name('checkout');
+    Route::post('process/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'process'])->name('process');
+    Route::get('bank-sim/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'bankSimulator'])->name('bank-simulator');
+    Route::post('simulate/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'simulate'])->name('simulate');
+    Route::get('status/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'status'])->name('status');
+    Route::get('status-check/{token}', [\App\Http\Controllers\PaymentGatewayController::class, 'statusCheck'])->name('status-check');
+});
+
 // Superadmin (Ketua Yayasan) Routes
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Superadmin\DashboardController::class, 'index'])->name('dashboard');

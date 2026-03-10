@@ -60,6 +60,14 @@ class Pembayaran extends Model
         return $this->belongsTo(User::class, 'dikonfirmasi_oleh');
     }
 
+    /**
+     * Relasi ke transaksi gateway (simulasi payment gateway)
+     */
+    public function transaksiGateway()
+    {
+        return $this->hasOne(TransaksiGateway::class);
+    }
+
     public function scopePending($query)
     {
         return $query->where('status_konfirmasi', 'pending');
